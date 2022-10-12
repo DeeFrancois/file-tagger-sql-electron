@@ -1,0 +1,22 @@
+{
+  "name": "_pythonsql",
+  "version": "1.0.0",
+  "description": "File tagger with Electron EEL and SQL",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/DeeFrancois/sql_file_tagger",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "author": "DeeFrancois",
+  "license": "MIT License",
+  "devDependencies": {
+    "electron": "^21.1.0"
+  }
+}

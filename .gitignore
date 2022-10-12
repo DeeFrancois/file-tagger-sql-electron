@@ -1,0 +1,11 @@
+/files
+/ignorethis
+/node_modules
+web/files
+my_filesystem.db
+crashlogs.db
+crashlogs2.db
+my_database.db
+ffmpeg.exe
+references.db
+testing_filepath.py
