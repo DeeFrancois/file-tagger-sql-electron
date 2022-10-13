@@ -1,8 +1,18 @@
+eel.expose(js_confirmation)
+function js_confirmation(db_name){
+    if(confirm(db_name + '.db does not exist. Create New Database? ')){
+        console.log("Creating");
+        eel.py_open_new_db(db_name,document.querySelector('#control-genthumbs').checked,document.querySelector('#control-shuffle').checked);
+
+    }else{
+        console.log("Nevermind");
+    }
+}
 
 eel.expose(js_display_file);
-function js_display_file(filename,db){
-    console.log(filename);
-    var exts = filename.split('.').pop();
+function js_display_file(filepath,db){
+    console.log(filepath);
+    var exts = filepath.split('.').pop();
     console.log(exts);
     if (exts=='jpg' || exts=='png' || exts=='jpeg' || exts=='jfif'){
         
@@ -10,13 +20,13 @@ function js_display_file(filename,db){
         document.getElementsByClassName('video-player')[0].src='';
 
         document.getElementsByClassName('img-player')[0].style.display='block';
-        document.getElementsByClassName('img-player')[0].src = 'files/'+db+'/'+filename;
+        document.getElementsByClassName('img-player')[0].src = 'atom://'+filepath;
     }else{
         document.getElementsByClassName('img-player')[0].style.display='none';
         document.getElementsByClassName('img-player')[0].style.scr='';
 
         document.getElementsByClassName('video-player')[0].style.display='block';
-        document.getElementsByClassName('video-player')[0].src='files/'+db+'/'+filename;
+        document.getElementsByClassName('video-player')[0].src='atom://'+filepath;
         
 }
 }
@@ -38,6 +48,8 @@ function js_display_source(filename,source){
     document.querySelector('.source-bar').innerText=`- Filename: ${filename} | Source: ${source}`;
 }
 function swap_video(e){
+    console.log("SWAPVIDEO:");
+    console.log(e);
 eel.py_update_index(e);
 //instead of doing the script manually here, I can just make a request to change the index
 //and then have the python react to that index change in basically the same way as the right control button
@@ -47,7 +59,7 @@ function clickPress(event){
 console.log(event);
 if(event.key=="Enter" && event.srcElement.id=="control-bar"){
     var new_db = document.getElementById('control-bar').value;
-    eel.py_open_new_db(new_db,document.querySelector('#control-genthumbs').checked,document.querySelector('#control-shuffle').checked);
+    eel.py_check_if_exists(new_db,document.querySelector('#control-genthumbs').checked,document.querySelector('#control-shuffle').checked);
     document.getElementById('control-bar-label').innerText=document.getElementById('control-bar').value+'.db';
     document.getElementById('control-bar').value='';
     
@@ -99,36 +111,52 @@ var source_mode = 0;
 var delete_mode = 0;
 var delete_hold = 0;
 var source_hold = 0;
+function adjust_thumb_widths(){
+    let curr_width = (document.body.getBoundingClientRect().width/909 * 100 - 100).toFixed(0);
+    // console.log(curr_width+'%');
+    if ( curr_width%15 ==0){
+        console.log("RESIZE");
+        document.querySelectorAll('.img-container').forEach(e=>e.style.width=100/(5+(curr_width/15))+'%');
+
+    }
+}
 $(window).resize(function(e){
     // window.resizeTo(size[0],size[1]);
-    console.log(document.body.getBoundingClientRect().width);
-    if (document.body.getBoundingClientRect().width > 1700){
-        console.log("Img width: ",document.querySelector('.img-container').style.width);
-        Array.from(document.querySelectorAll('.img-container')).forEach(e=>e.style.width='10%');
-        // size_checkpoint=size_checkpoint*1.3;
-    }
+    // console.log(document.body.getBoundingClientRect().width);
+    adjust_thumb_widths();
+    // if (document.body.getBoundingClientRect().width > 1700){
+    //     console.log("Img width: ",document.querySelector('.img-container').style.width);
+    //     Array.from(document.querySelectorAll('.img-container')).forEach(e=>e.style.width=100/15+'%');
+    //     // size_checkpoint=size_checkpoint*1.3;
+    // }
     
-    else if (document.body.getBoundingClientRect().width > 1000){
-        console.log("Img width: ",document.querySelector('.img-container').style.width);
-        Array.from(document.querySelectorAll('.img-container')).forEach(e=>e.style.width='12.5%');
-        // size_checkpoint=size_checkpoint*1.3;
-    }
+    // else if (document.body.getBoundingClientRect().width > 1100){
+    //     console.log("Img width: ",document.querySelector('.img-container').style.width);
+    //     Array.from(document.querySelectorAll('.img-container')).forEach(e=>e.style.width=100/9+'%');
+    //     // size_checkpoint=size_checkpoint*1.3;
+    // }
+    // else if (document.body.getBoundingClientRect().width > 500){
+    //     console.log("Img width: ",document.querySelector('.img-container').style.width);
+    //     Array.from(document.querySelectorAll('.img-container')).forEach(e=>e.style.width=100/5+'%');
+    //     // size_checkpoint=size_checkpoint*1.3;
+    // }
 });
 
 eel.expose(js_add_to_drawer);
-function js_add_to_drawer(e,folder_choice){
+function js_add_to_drawer(e,folder_choice,thumb_path){
+    // console.log(e);
     // console.log("HEREEEE");
 $('<div>',{
     class:'img-container'
 }).append($('<img>',{
     class:'drawer-image',
-    src:`files/thumbs/${folder_choice}/`+e.replace('.webm','.jpg').replace('.mp4','.jpg'),
-    'data-img':`files/${folder_choice}/`+e,
-    onclick:`swap_video('${e.replace('thumbs/','')}')`
+    src:`${thumb_path}`,
+    'data-img':e,
+    click:function(){swap_video(e)}
 })).append($('<div>',{
     class:'img-overlay',
     text:'Delete',
-    onclick:`delete_image(this,'${e}')`
+    click:function(){delete_image(this,e)}
 })).appendTo('.drawer-image-container');
 
 }
@@ -240,9 +268,7 @@ setTimeout(function(){
 
 eel.expose(js_update_autocomplete);
 function js_update_autocomplete(the_list){
-let opt = document.createElement('option');
-opt.value = '+ Create New Database';
-document.querySelector('#suggestions').appendChild(opt);
+document.querySelectorAll('option').forEach(e=>e.remove());
 Array.from(the_list).forEach(function(e){
     console.log(e);
     let opt = document.createElement('option');
@@ -309,11 +335,6 @@ document.getElementsByClassName('left-button')[0].onclick=function(){
     document.getElementById('input-tags').value='';
 }
 
-document.getElementsByClassName('control-box-button')[0].onclick=function(){
-    //unfinished
-    console.log("database creation routine");
-}
-
 // document.getElementsByClassName('delete-button')[0].onclick=function(){
 //     toggle_delete();
 // }
@@ -345,7 +366,7 @@ document.querySelector('.control-bar').addEventListener('change',function(e){
     console.log("Manually triggered");
     console.log(e);
     var new_db = document.getElementById('control-bar').value;
-    eel.py_open_new_db(new_db,document.querySelector('#control-genthumbs').checked,document.querySelector('#control-shuffle').checked);
+    eel.py_check_if_exists(new_db,document.querySelector('#control-genthumbs').checked,document.querySelector('#control-shuffle').checked);
     document.getElementById('control-bar-label').innerText=document.getElementById('control-bar').value+'.db';
     document.getElementById('control-bar').value='';
 });

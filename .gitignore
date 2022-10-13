@@ -1,6 +1,7 @@
 /files
 /ignorethis
 /node_modules
+/testdatabase
 web/files
 my_filesystem.db
 crashlogs.db

@@ -11,12 +11,15 @@ import eel
 import eel.browsers
 import time
 import sys
-from numpy import size
+from numpy import size, true_divide
 import webview
 import threading
 from PIL import Image, ImageOps
 from multiprocessing import Pool
 import subprocess
+import tkinter as tk
+from tkinter import filedialog
+
 #
 #TODO: DELETE IMAGES FROM DATABASE
 #FIX "orphan"
@@ -30,7 +33,7 @@ class my_database:
         # self.folder = input('files or other')
         self.current_db = current_db
         self.loaded_database=current_db+'.db'
-        self.folder='web/files/'+current_db
+        self.folder=r'C:\Users\damet\Desktop\New folder\Programming\Github_Projects\Personal_WIP_Directory\_pythonsql-ELECTRON\testdatabase'
        
         
         self.populated=0
@@ -85,22 +88,35 @@ class my_database:
 
         self.conn.commit()
 
-        self.add_folder_to_db(self.folder)
+        self.add_folder_to_db()
         self.add_tag_list_to_db(self.tag_list)
         # self.exec_taging()
 
-    def add_folder_to_db(self,folder):
+    def add_folder_to_db(self):
         print("ADDING FOLDER")
-        the_list=os.listdir(folder)
-        the_list= [x for x in the_list if os.path.isfile(folder+'/'+x) ]
+        root = tk.Tk()
+        root.withdraw()
+
+        folder = filedialog.askdirectory()
+
+        # the_list=os.listdir(folder)
+        # the_list= [x for x in the_list if os.path.isfile(folder+'/'+x) ]
+        glob_pattern = os.path.join(folder, '*')
+        the_list = sorted(glob(glob_pattern), key=os.path.getctime)
         for item in the_list:
             self.c.execute("INSERT INTO IMAGES(filename) VALUES (?)",(item,))
             self.conn.commit()
             source = self.get_metadata(item)
             print("Adding: ",item, "with Source: ",source," to database")
             self.add_source(item,source)
-
         self.populated=1
+    def get_folder_from_db(self):
+        print("Retrieving files from database")
+        self.c.execute("SELECT filename FROM IMAGES")
+        file_list=self.c.fetchall()
+        file_list=[x[0] for x in file_list]
+        return file_list
+
     def add_image_to_db(self,filename):
         print("Adding Image to database: ",filename)
         self.c.execute("INSERT INTO IMAGES(filename) VALUES(?)",(filename,)) 
@@ -126,7 +142,7 @@ class my_database:
             self.add_source(item,source)
     
     def get_metadata(self,filename):
-        curr = 'web/files/'+self.current_db+'/'+filename
+        curr = filename
         output = subprocess.check_output(
             'ffprobe "{}" -show_entries format_tags=title -of compact=p=0:nk=1 -v 0'.format(curr)
         )
@@ -452,9 +468,9 @@ def py_set_tags(tags):
 def py_set_source(source): 
     # print("Setting video source")
     print(source)
-    filename = current_folder[current_index]
-    the_db.add_source(filename,source)
-    write_source_to_file(filename,source)
+    filepath = current_folder[current_index]
+    the_db.add_source(filepath,source)
+    write_source_to_file(filepath,source)
     py_right_control()
 
 
@@ -480,6 +496,8 @@ def py_delete_tags(tags):
 
 @eel.expose
 def py_update_index(filename):
+    print("UPDATE INDEX")
+    print(repr(filename))
     global current_index
     # print(current_folder)
     # print(filename)
@@ -497,8 +515,12 @@ def py_populate_drawer():
     eel.js_change_database_label(current_db+'.db')
     current_drawer_index=0
     for item in current_folder[current_drawer_index:150]:
-        eel.js_add_to_drawer(item,current_db)
+        # print(item)
+        filename=item.split('\\')[-1]
+        thumb_path='files/thumbs/'+current_db+'/'+filename.replace('.webm','.jpg').replace('.mp4','.jpg')
+        eel.js_add_to_drawer(item,current_db,thumb_path)
         current_drawer_index+=1
+    py_initial_routine()
     py_populate_tags()
     py_right_control()
 
@@ -506,7 +528,7 @@ def py_populate_drawer():
 def py_open_file(relpath):
     dirname = os.path.dirname(__file__)
     filepath = os.path.join(dirname, 'web/'+relpath)
-    os.startfile(filepath)
+    os.startfile(relpath)
     # curr=os.getcwd()
     # print(curr)
     # print(os.path.join(curr,'\web',filename))
@@ -530,7 +552,9 @@ def py_retrieve_batch_with_tag(tag):
         folder_size = len(current_folder)
         for item in current_folder[current_drawer_index:150]:
             # print(item)
-            eel.js_add_to_drawer(item,current_db)
+            filename=item.split('\\')[-1]
+            thumb_path='files/thumbs/'+current_db+'/'+filename.replace('.webm','.jpg').replace('.mp4','.jpg')
+            eel.js_add_to_drawer(item,current_db,thumb_path)
             current_drawer_index+=1
     else:
         last_tag_batch = tag
@@ -544,7 +568,9 @@ def py_retrieve_batch_with_tag(tag):
 
         for item in current_folder[current_drawer_index:150]:
             # print(item)
-            eel.js_add_to_drawer(item,current_db)
+            filename=item.split('\\')[-1]
+            thumb_path='files/thumbs/'+current_db+'/'+filename.replace('.webm','.jpg').replace('.mp4','.jpg')
+            eel.js_add_to_drawer(item,current_db,thumb_path)
             current_drawer_index+=1
 
 
@@ -556,35 +582,35 @@ def py_populate_tags():
         eel.js_add_to_tagfield(item)
 
 @eel.expose
-def py_hide_image(filename):
+def py_hide_image(filepath):
     # print("HIDING POST")
-    curr = filename.split('/')[-1]
-    current_folder[current_folder.index(curr)]='none'
+    current_folder[current_folder.index(filepath)]='none'
 
 @eel.expose
-def py_delete_image(filename,delete_locally):
-    # print("Deleting: ",filename)
+def py_delete_image(input_filepath,delete_locally):
+    # print("Deleting: ",input_filepath)
     # 'data-img':`files/${folder_choice}/`+e,
     #files/thumbs/${folder_choice}/`+e.replace('.webm','.jpg').replace('.mp4','.jpg')
-    current_folder[current_folder.index(filename)]='none'
-    the_db.delete_image_from_db(filename)
+    current_folder[current_folder.index(input_filepath)]='none'
+    the_db.delete_image_from_db(input_filepath)
+    filename=input_filepath.split('\\')[-1]
     thumbnail = 'files/thumbs/'+current_db+'/'+filename.replace(filename.split('.')[-1],'jpg')
-    filepath='files/'+current_db+'/'+filename
 
     dirname = os.path.dirname(__file__)
 
-    filepath = os.path.join(dirname, 'web/'+filepath)
+    # filepath = os.path.join(dirname, 'web/'+filepath)
     thumbnail = os.path.join(dirname, 'web/'+thumbnail)
     if delete_locally:
         print("Deleting local files as well")
-        os.remove(filepath)
+        os.remove(input_filepath)
         os.remove(thumbnail)
     # os.startfile(filepath)
     # os.startfile(thumbnail)
 
     
-def write_source_to_file(filename,source):
-    curr = 'web/files/'+current_db+'/'+filename
+def write_source_to_file(filepath,source):
+    curr = filepath
+    filename=filepath.split('\\')[-1]
     print(curr)
     print(filename)
     print("Writing source to file")
@@ -595,29 +621,31 @@ def write_source_to_file(filename,source):
     print("DONE")
 
 def get_metadata():
-    for item in current_folder:
-        curr = 'web/files/'+current_db+'/'+item
+    for filepath in current_folder:
+        curr = filepath
         output = subprocess.check_output(
             'ffprobe "{}" -show_entries format_tags=title -of compact=p=0:nk=1 -v 0'.format(curr)
         )
         output = output.strip().decode('UTF-8')
         if output is not '':
-            print("FILE: ",item, "METADATA: ",output)
+            print("FILE: ",filepath, "METADATA: ",output)
 
 def generate_thumbnail():
     print("Generating Thumbnails")
-    
-    for item in current_folder:
-        curr = 'web/files/'+current_db+'/'+item 
+
+    for filepath in current_folder:
+        filename=filepath.split('\\')[-1]
+        curr = filepath
         # print(curr)
-        output='web/files/thumbs/'+current_db+'/'+item.replace('.webm','.jpg').replace('.mp4','.jpg')
+
+        output='web/files/thumbs/'+current_db+'/'+filename.replace('.webm','.jpg').replace('.mp4','.jpg')
         # ffmpeg.input(curr).output(output).run()
         try:
             os.mkdir('web/files/thumbs/'+current_db)
         except:
             pass
         print('Input: ',curr, " OUTPUT: ",output)
-        exts = item.split('.')[-1]
+        exts = filename.split('.')[-1]
         print(exts)
         size=(236,326)
 
@@ -648,13 +676,15 @@ def generate_thumbnail():
                 return e 
 
 @eel.expose
-def py_open_new_db(new_folder,gen_thumbs,shuffle):
-    if os.path.isfile(new_folder+'.db'):
-        print("Opening new database: ",new_folder)
+def py_check_if_exists(db_name,gen_thumbs,shuffle):
+    if os.path.isfile(db_name+'.db'):
+        py_open_new_db(db_name,gen_thumbs,shuffle)
     else:
-        print("DOESNT EXIST")
-        return
+        print(db_name)
+        eel.js_confirmation(db_name)
         
+@eel.expose
+def py_open_new_db(new_folder,gen_thumbs,shuffle):
     
     global the_db
     global current_index
@@ -665,7 +695,6 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
     global current_db
     global base_list
     global last_tag_batch
-    
     try:
         del the_db
     except:
@@ -678,11 +707,12 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
     lock =0
     last_tag_batch=''
 
-    current_folder=os.listdir('web/files/'+current_db+'/')
-    current_folder= [x for x in current_folder if os.path.isfile('web/files/'+current_db+'/'+x) ]
+    # glob_pattern = os.path.join(test_folderpath, '*')
+    # current_folder = sorted(glob(glob_pattern), key=os.path.getctime)
     # random.shuffle(current_folder)
-    base_list=current_folder
     the_db = my_database(current_db)
+    current_folder=the_db.get_folder_from_db()
+    base_list=current_folder
     the_db.get_tag_list()
     folder_size = len(current_folder)
     print(folder_size, " images in folder")
@@ -709,6 +739,7 @@ def py_initial_routine():
         if item.split('.')[-1] == 'db' and item.split('.')[0]!='crashlogs':
             existing_databases.append(item)
     eel.js_update_autocomplete(existing_databases)
+
 
 eel.start('main.html',mode='electron',size=(909,690))
 # py_initial_routine()

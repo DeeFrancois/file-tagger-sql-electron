@@ -52,3 +52,4 @@ app.whenReady().then(() => {
     callback(filePath)
   })
 })
+// https://stackoverflow.com/questions/50781741/select-and-display-an-image-from-the-filesystem-with-electron
