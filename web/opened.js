@@ -2,7 +2,7 @@ eel.expose(js_confirmation)
 function js_confirmation(db_name){
     if(confirm(db_name + '.db does not exist. Create New Database? ')){
         console.log("Creating");
-        eel.py_open_new_db(db_name,document.querySelector('#control-genthumbs').checked,document.querySelector('#control-shuffle').checked);
+        eel.py_open_new_db(db_name,1,document.querySelector('#control-shuffle').checked);
 
     }else{
         console.log("Nevermind");

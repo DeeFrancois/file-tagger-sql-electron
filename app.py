@@ -103,6 +103,8 @@ class my_database:
         # the_list= [x for x in the_list if os.path.isfile(folder+'/'+x) ]
         glob_pattern = os.path.join(folder, '*')
         the_list = sorted(glob(glob_pattern), key=os.path.getctime)
+        
+        the_list = [x for x in the_list if x.split('.')[-1] in ['webm','png','mp4','jpg'] ]
         for item in the_list:
             self.c.execute("INSERT INTO IMAGES(filename) VALUES (?)",(item,))
             self.conn.commit()
@@ -201,7 +203,7 @@ class my_database:
         self.c.execute('DELETE FROM IMAGE_TAG WHERE tag_id={} AND image_id={}'.format(tag_id,image_id))
         self.conn.commit()
         self.c.execute('SELECT * FROM IMAGE_TAG WHERE tag_id={}'.format(tag_id))
-        if self.c.fetchone() is None:
+        if self.c.fetchone() == None:
             # print("NO MORE")
             self.c.execute('DELETE FROM TAGS WHERE tag_id={}'.format(tag_id))
             self.conn.commit()
@@ -216,7 +218,7 @@ class my_database:
         tags=tags.split(' ')
         print("Applying tags: ",tags, "to image: ",filename)
         for tag in tags:
-            if tag is '':
+            if tag == '':
                 pass
             if not self.if_tag_exists(tag):
                 print("Creating new tag: ",tag)
@@ -255,7 +257,7 @@ class my_database:
             curr_image_id = curr_image_id[0]
             # print("Image: ",item," corresponds to ID:",curr_image_id)
             user_input = input("Enter Tags for current Video:")
-            if user_input is 'q':
+            if user_input == 'q':
                 return
             user_input = user_input.split(' ')
             # print("Applying tags: ", user_input, " to image")
@@ -286,7 +288,7 @@ class my_database:
         self.c.execute("SELECT image_id FROM IMAGES WHERE filename='{}'".format(filename))
         curr_image_id=self.c.fetchone()
         # print(curr_image_id)
-        if curr_image_id is None:
+        if curr_image_id == None:
             the_db.add_image_to_db(filename)
             return ''
         curr_image_id=curr_image_id[0]
@@ -448,6 +450,7 @@ def py_get_tags():
     eel.js_display_tags(tags)
     source = the_db.check_source(filename)
     # print(len(source))
+    filename=filename.split('\\')[-1]
     if len(filename) > 20:
         filename = filename[0:25]+'...'
         
@@ -627,7 +630,7 @@ def get_metadata():
             'ffprobe "{}" -show_entries format_tags=title -of compact=p=0:nk=1 -v 0'.format(curr)
         )
         output = output.strip().decode('UTF-8')
-        if output is not '':
+        if output != '':
             print("FILE: ",filepath, "METADATA: ",output)
 
 def generate_thumbnail():

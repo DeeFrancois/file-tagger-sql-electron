@@ -3,7 +3,7 @@ const electron = require("electron");
 const {app, protocol,BrowserWindow} = electron;
 const path = require('path')
 const url = require('url')
-
+app.disableHardwareAcceleration()
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
