@@ -1,6 +1,8 @@
 // Modules to control application life and create native browser window
 const electron = require("electron");
 const {app, protocol,BrowserWindow} = electron;
+const path = require('path')
+const url = require('url')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -21,7 +23,7 @@ app.on("ready", () => {
         nodeIntegration: true,
         contextIsolation: false,
         enableRemoteModule: true,
-        webSecurity:false, //This is apparently bad but for my offline, non-deployed project it seems fine?
+        webSecurity:true, //This is apparently bad but for my offline, non-deployed project it seems fine?
         nodeIntegrationInWorker:true,
       },
     });
@@ -43,3 +45,10 @@ app.on('activate', function () {
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow()
 });
+
+app.whenReady().then(() => {
+  protocol.registerFileProtocol('atom', (request, callback) => {
+    const filePath = url.fileURLToPath('file://' + request.url.slice('atom://'.length))
+    callback(filePath)
+  })
+})
