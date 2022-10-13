@@ -11,9 +11,11 @@ let mainWindow
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
     const mainWindow = new BrowserWindow({
-      width: 1000,
-      height: 600,
-      autoHideMenuBar:true,
+      width: 909,
+      height: 690,
+      minHeight: 690,
+      minWidth: 909,
+      // autoHideMenuBar:true,
       useContentSize:true,
       webPreferences: {
         nodeIntegration: true,

@@ -99,9 +99,21 @@ var source_mode = 0;
 var delete_mode = 0;
 var delete_hold = 0;
 var source_hold = 0;
-// $(window).resize(function(){
-//     window.resizeTo(size[0],size[1]);
-// });
+$(window).resize(function(e){
+    // window.resizeTo(size[0],size[1]);
+    console.log(document.body.getBoundingClientRect().width);
+    if (document.body.getBoundingClientRect().width > 1700){
+        console.log("Img width: ",document.querySelector('.img-container').style.width);
+        Array.from(document.querySelectorAll('.img-container')).forEach(e=>e.style.width='10%');
+        // size_checkpoint=size_checkpoint*1.3;
+    }
+    
+    else if (document.body.getBoundingClientRect().width > 1000){
+        console.log("Img width: ",document.querySelector('.img-container').style.width);
+        Array.from(document.querySelectorAll('.img-container')).forEach(e=>e.style.width='12.5%');
+        // size_checkpoint=size_checkpoint*1.3;
+    }
+});
 
 eel.expose(js_add_to_drawer);
 function js_add_to_drawer(e,folder_choice){
