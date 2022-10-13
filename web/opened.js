@@ -117,7 +117,7 @@ $(window).resize(function(e){
 
 eel.expose(js_add_to_drawer);
 function js_add_to_drawer(e,folder_choice){
-    console.log("HEREEEE");
+    // console.log("HEREEEE");
 $('<div>',{
     class:'img-container'
 }).append($('<img>',{
