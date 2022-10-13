@@ -114,9 +114,9 @@ var source_hold = 0;
 function adjust_thumb_widths(){
     let curr_width = (document.body.getBoundingClientRect().width/909 * 100 - 100).toFixed(0);
     // console.log(curr_width+'%');
-    if ( curr_width%15 ==0){
+    if ( curr_width%20 ==0){
         console.log("RESIZE");
-        document.querySelectorAll('.img-container').forEach(e=>e.style.width=100/(5+(curr_width/15))+'%');
+        document.querySelectorAll('.img-container').forEach(e=>e.style.width=100/(5+(curr_width/20))+'%');
 
     }
 }
