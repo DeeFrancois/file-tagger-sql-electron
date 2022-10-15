@@ -15,9 +15,11 @@ app.on("ready", () => {
     const mainWindow = new BrowserWindow({
       width: 909,
       height: 690,
-      minHeight: 690,
-      minWidth: 909,
+      // minHeight: 690,
+      // minWidth: 909,
       // autoHideMenuBar:true,
+      frame:false,
+      transparent:true,
       useContentSize:true,
       webPreferences: {
         nodeIntegration: true,

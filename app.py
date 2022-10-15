@@ -105,11 +105,15 @@ class my_database:
         the_list = sorted(glob(glob_pattern), key=os.path.getctime)
         
         the_list = [x for x in the_list if x.split('.')[-1] in ['webm','png','mp4','jpg'] ]
+        file_count = len(the_list)
+        count = 0
         for item in the_list:
+            count+=1
+            print(count/file_count*100,'%')
             self.c.execute("INSERT INTO IMAGES(filename) VALUES (?)",(item,))
             self.conn.commit()
             source = self.get_metadata(item)
-            print("Adding: ",item, "with Source: ",source," to database")
+            # print("Adding: ",item, "with Source: ",source," to database")
             self.add_source(item,source)
         self.populated=1
     def get_folder_from_db(self):
@@ -391,6 +395,7 @@ print("Here")
 
 
 eel.init('web')
+# eel.start('main.html',mode='chrome',block=False,size=(909,690))
 # eel.browsers.set_path('electron', 'node_modules/electron/dist/electron')
 # options = {
 # 	'mode': 'custom',
@@ -553,7 +558,7 @@ def py_populate_drawer():
     eel.js_clear_drawer()
     eel.js_change_database_label(current_db+'.db')
     current_drawer_index=0
-    for item in current_folder[current_drawer_index:150]:
+    for item in current_folder[current_drawer_index:12041]:
         # print(item)
         filename=item.split('\\')[-1]
         thumb_path='files/thumbs/'+current_db+'/'+filename.replace('.webm','.jpg').replace('.mp4','.jpg')
@@ -671,8 +676,12 @@ def get_metadata():
 
 def generate_thumbnail():
     print("Generating Thumbnails")
+    count = 0
+    file_count = len(current_folder)
 
     for filepath in current_folder:
+        count+=1
+        print(count/file_count*100,'%')
         filename=filepath.split('\\')[-1]
         curr = filepath
         # print(curr)
@@ -683,15 +692,15 @@ def generate_thumbnail():
             os.mkdir('web/files/thumbs/'+current_db)
         except:
             pass
-        print('Input: ',curr, " OUTPUT: ",output)
+        # print('Input: ',curr, " OUTPUT: ",output)
         exts = filename.split('.')[-1]
-        print(exts)
+        # print(exts)
         size=(236,326)
 
         if not(exts == 'jpg' or exts == 'png' or exts == 'jpeg' or exts =='jfif'):
             
             subprocess.call(
-            'ffmpeg -y -i "{}" -q:v 1 -vframes 1 "{}"'.format(curr, output))
+            'ffmpeg -hide_banner -loglevel error -y -i "{}" -q:v 1 -vframes 1 "{}"'.format(curr, output))
             
             try:
                 # Load just once, then successively scale down

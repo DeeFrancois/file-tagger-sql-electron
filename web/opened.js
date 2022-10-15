@@ -1,3 +1,51 @@
+var timer_running = 0;
+var loop_video_flag = 0;
+var inactivityTime = function () {
+    var time;
+    window.onload = resetTimer;
+    // DOM Events
+    document.onmousemove = resetTimer;
+    document.onkeydown = resetTimerLonger;
+    // repeater();
+    time=setInterval(eel.py_right_control, 2000);
+    function resetTimer() {
+        clearTimeout(time);
+        time=setInterval(eel.py_right_control, 2000);
+        
+        // 1000 milliseconds = 1 second
+    }
+    function resetTimerLonger() {
+        clearTimeout(time);
+        time=setInterval(eel.py_right_control, 6000);
+        
+        // 1000 milliseconds = 1 second
+    }
+    function repeater(){
+        eel.py_right_control();
+        
+        // resetTimer();
+    }
+};
+
+function hide_sidebar(){
+    document.querySelector('.sidebar-container').style.display='none';
+    document.querySelector('.video-container').style.width='100%';
+
+    document.querySelector('.control-box').style.display='none';
+    document.querySelector('.drawer-image-container').style.width='100%';
+    if (timer_running==0){
+        console.log("STARTING TIMER");
+        timer_running=1;
+        inactivityTime();
+    }
+}
+function show_sidebar(){
+    document.querySelector('.sidebar-container').style.display='inline-block';
+    document.querySelector('.video-container').style.width='70%';
+
+    document.querySelector('.control-box').style.display='inline-block';
+    document.querySelector('.drawer-image-container').style.width='70%';
+}
 eel.expose(js_confirmation)
 function js_confirmation(db_name){
     if(confirm(db_name + '.db does not exist. Create New Database? ')){
@@ -121,9 +169,16 @@ function adjust_thumb_widths(){
     }
 }
 $(window).resize(function(e){
+
     // window.resizeTo(size[0],size[1]);
     // console.log(document.body.getBoundingClientRect().width);
     adjust_thumb_widths();
+    if(document.body.getBoundingClientRect().width<540){
+        hide_sidebar();
+    }
+    else{
+        show_sidebar();
+    }
     // if (document.body.getBoundingClientRect().width > 1700){
     //     console.log("Img width: ",document.querySelector('.img-container').style.width);
     //     Array.from(document.querySelectorAll('.img-container')).forEach(e=>e.style.width=100/15+'%');
@@ -370,6 +425,14 @@ document.querySelector('.control-bar').addEventListener('change',function(e){
     document.getElementById('control-bar-label').innerText=document.getElementById('control-bar').value+'.db';
     document.getElementById('control-bar').value='';
 });
+document.querySelector('.video-player').onended=function(){
+    console.log("Video ended");
+    // What you want to do after the event
+    if (loop_video_flag==0){
+        eel.py_right_control();
+    }
+};
+
 document.querySelector('.video-player').onmouseover=function(){
     document.querySelector('.source-bar').className='source-bar';
 }
