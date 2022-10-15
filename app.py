@@ -119,6 +119,42 @@ class my_database:
         file_list=[x[0] for x in file_list]
         return file_list
 
+    def clear_null_images(self):
+        self.c.execute("DELETE FROM IMAGES WHERE filename='none'")
+        self.conn.commit()
+
+    def the_transfer(self):
+        #Pull old taglist--> tag=(tag_id,description)
+        #for (tag_id,description) in taglist
+        #INSERT INTO TAGS(tag_id,description) VALUES(?,?)
+        
+        #pull old IMAGES
+        #for (old_filename) in images
+        #SELECT image_id FROM IMAGES WHERE filename={new_filename}
+
+        #PULL IMAGES
+        #for filepath in IMAGES
+        # new_filename= filepath.split('\')[-1]
+        # print(new_filename) 
+        #UPDATE IMAGES SET filename="{}" WHERE filename="{}".format(filepath,new_filename)
+        print("STARTING TRANSFER")
+        other_conn = sqlite3.connect('old_my_database.db')
+        other_conn.execute('PRAGMA foreign_keys=ON')
+        other_c = other_conn.cursor()
+        self.c.execute("SELECT filename FROM IMAGES")
+        new_filenames = [x[0] for x in self.c.fetchall()]
+
+        for new_filepath in new_filenames:
+            if new_filepath == 'none':
+                continue
+            old_filename = new_filepath.split('\\')[-1]
+            print(old_filename)
+            other_c.execute('UPDATE IMAGES SET filename="{}" WHERE filename="{}"'.format(new_filepath,old_filename))
+        other_conn.commit()
+
+        
+    
+    
     def add_image_to_db(self,filename):
         print("Adding Image to database: ",filename)
         self.c.execute("INSERT INTO IMAGES(filename) VALUES(?)",(filename,)) 
@@ -725,6 +761,8 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
     if shuffle:
         random.shuffle(current_folder)
     py_populate_drawer()
+    # the_db.the_transfer()
+    # the_db.clear_null_images()
     # get_metadata()
     # py_right_control()
 
