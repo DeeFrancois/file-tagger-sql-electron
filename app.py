@@ -561,7 +561,7 @@ def py_populate_drawer():
     eel.js_clear_drawer()
     eel.js_change_database_label(current_db+'.db')
     current_drawer_index=0
-    for item in current_folder[current_drawer_index:12041]:
+    for item in current_folder[current_drawer_index:1000]:
         # print(item)
         filename=item.split('\\')[-1]
         thumb_path='files/thumbs/'+current_db+'/'+filename.replace('.webm','.jpg').replace('.mp4','.jpg')
