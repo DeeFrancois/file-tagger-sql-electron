@@ -119,6 +119,11 @@ body{
     z-index: 1;
 
 }
+.topenlarged{
+    max-height: calc(100% - 20px);
+    min-height: calc(100% - 20px);
+    height: 100%;
+}
 .middle-button-container{
     position: relative;
     height: 20px;
@@ -127,7 +132,8 @@ body{
     z-index: 2;
     border-style: solid;
     border-top: 0;
-    border-bottom: 0;
+    border-bottom-width: 0;
+    box-sizing: border-box;
 }
 .middle-button{
     display: inline;
@@ -146,6 +152,11 @@ body{
     background-color: rgb(36, 36, 36);
    
 }
+.middle-button.middleclicked{
+    background-color: rgb(10, 10, 10);
+    box-shadow: inset 0px 0px 1px #8a8a8a;
+}
+
 
 .bottomdrawer-container{
     position: relative;
@@ -552,12 +563,12 @@ input[type="checkbox"]{
             </div>
         </div>
         <div class="middle-button-container">
-            <button class="middle-button" onclick="toggle_loop()">Loop</button>
-            <button class="middle-button" onclick="toggle_autoplay()">Autoplay</button>
-            <button class="middle-button" onclick="toggle_idle_skip()">Idle Skip</button>
-            <button class="middle-button" onclick="toggle_mute()">Mute</button>
-            <button class="middle-button" onclick="toggle_sidebar()">Hide Sidebar</button>
-            <button class="middle-button" onclick="toggle_drawer()">Hide Drawer</button>
+            <button class="middle-button" id = 'loop-button' onclick="toggle_loop()">Loop</button>
+            <button class="middle-button" id = 'autoplay-button' onclick="toggle_autoplay_next()">Autoplay</button>
+            <button class="middle-button" id = 'idle-button' onclick="toggle_idle_skip()">Idle Skip</button>
+            <button class="middle-button" id = 'mute-button' onclick="toggle_mute()">Mute</button>
+            <button class="middle-button" id = 'sidebar-button' onclick="toggle_sidebar()">Hide Sidebar</button>
+            <button class="middle-button" id = 'drawer-button' onclick="toggle_drawer()">Hide Drawer</button>
         </div>
 
        

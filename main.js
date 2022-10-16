@@ -19,7 +19,7 @@ app.on("ready", () => {
       width: 909,
       height: 690,
       // minHeight: 690,
-      // minWidth: 909,
+      minWidth: 542,
       autoHideMenuBar:true,
       frame:false,
       transparent:true,
