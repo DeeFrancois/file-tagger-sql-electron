@@ -21,7 +21,10 @@ import tkinter as tk
 from tkinter import filedialog
 
 #
-#TODO: DELETE IMAGES FROM DATABASE
+#TODO: Want to add Buttons between top container and bottom container, should match background color with barely visible borders seperated them
+#like the text is lasered into the background
+#Buttons: (Hide) Sidebar, bottom bar, Control box, Loop, Mute, Autoplay next vid, 
+#Split sidebar with two buttons at top (or tabs?); All tags, Current vid metadata
 #FIX "orphan"
 #http://howto.philippkeller.com/2005/04/24/Tags-Database-schemas/ Toxi solution
 #https://stackoverflow.com/questions/20856/recommended-sql-database-design-for-tags-or-tagging
@@ -791,7 +794,7 @@ def py_initial_routine():
     eel.js_update_autocomplete(existing_databases)
 
 
-eel.start('main.html',mode='electron',size=(909,690))
+eel.start('main.html',mode='electron')
 # py_initial_routine()
 # py_initial_routine()
 # while True:

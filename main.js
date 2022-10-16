@@ -1,9 +1,11 @@
 // Modules to control application life and create native browser window
 const electron = require("electron");
-const {app, protocol,BrowserWindow} = electron;
+const {app, protocol, dialog,BrowserWindow} = electron;
 const path = require('path')
 const url = require('url')
-app.disableHardwareAcceleration()
+
+
+// app.disableHardwareAcceleration()
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -11,6 +13,7 @@ let mainWindow
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+
 app.on("ready", () => {
     const mainWindow = new BrowserWindow({
       width: 909,
@@ -18,8 +21,8 @@ app.on("ready", () => {
       // minHeight: 690,
       // minWidth: 909,
       // autoHideMenuBar:true,
-      frame:false,
-      transparent:true,
+      // frame:false,
+      // transparent:true,
       useContentSize:true,
       webPreferences: {
         nodeIntegration: true,
@@ -32,7 +35,7 @@ app.on("ready", () => {
     
     
     mainWindow.loadURL(`http://localhost:8000/main.html`);
-
+    // opened(mainWindow.id);
   });
 
 // Quit when all windows are closed.
@@ -52,6 +55,12 @@ app.whenReady().then(() => {
   protocol.registerFileProtocol('atom', (request, callback) => {
     const filePath = url.fileURLToPath('file://' + request.url.slice('atom://'.length))
     callback(filePath)
-  })
+  });
+  
 })
+
+// export function clack(){
+//   console.log("YAYYY");
+// }
+// exports.clack = () => console.log("yayy");
 // https://stackoverflow.com/questions/50781741/select-and-display-an-image-from-the-filesystem-with-electron
