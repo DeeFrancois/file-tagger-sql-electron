@@ -492,6 +492,24 @@ def close():
     sys.exit(0)
 
 @eel.expose
+def hide_based_on_tags(): #This filter works for first display (so to hide stuff for demos, but will need to move filter functions to the actual the_db class for it to work within real usage)
+    filter_list = ['moviestill','test','poster']
+    current_list = current_folder
+    for ind,item in enumerate(current_list):
+        filter_flag = False
+        tags = the_db.check_tags(item)
+        # print(tags)
+        for current_tag in tags:
+            if current_tag[0] in filter_list:
+                print("FILTERING OUT: ")
+                print(current_folder[ind])
+                current_folder[ind] = 'none'
+                break
+    print("After filtering, size of folder: ",len(current_folder))
+    
+        
+
+@eel.expose
 def py_left_control():
     global current_index
     if current_index-1 > -1:
@@ -615,6 +633,8 @@ def py_populate_drawer():
     eel.js_change_database_label(current_db+'.db')
     current_drawer_index=0
     for item in current_folder[current_drawer_index:1000]:
+        if (item is 'none'):
+            continue
         # print(item)
         filename=item.split('\\')[-1]
         thumb_path='files/thumbs/'+current_db+'/'+filename.replace('.webm','.jpg').replace('.mp4','.jpg')
@@ -830,6 +850,7 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
         generate_thumbnail()
     if shuffle:
         random.shuffle(current_folder)
+    # hide_based_on_tags()
     py_populate_drawer()
     # the_db.the_transfer()
     # the_db.adjust_old_filenames()
