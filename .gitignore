@@ -5,9 +5,10 @@
 web/files
 my_filesystem.db
 crashlogs.db
-crashlogs2.db
+test_crashlogs.db
 my_database.db
 ffmpeg.exe
-references.db
+PaintingReferences.db
 testing_filepath.py
 thewall.db
+.gitignore

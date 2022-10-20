@@ -109,7 +109,7 @@ class my_database:
         glob_pattern = os.path.join(folder, '*')
         the_list = sorted(glob(glob_pattern), key=os.path.getctime)
         
-        the_list = [x for x in the_list if x.split('.')[-1] in ['webm','png','mp4','jpg'] ]
+        the_list = [x for x in the_list if x.split('.')[-1] in ['webm','png','mp4','jpg','jpeg'] ]
         file_count = len(the_list)
         count = 0
         for item in the_list:
@@ -165,19 +165,35 @@ class my_database:
         # print(new_filename) 
         #UPDATE IMAGES SET filename="{}" WHERE filename="{}".format(filepath,new_filename)
         print("STARTING TRANSFER")
-        other_conn = sqlite3.connect('old_my_database.db')
+        other_conn = sqlite3.connect('old_references.db')
         other_conn.execute('PRAGMA foreign_keys=ON')
         other_c = other_conn.cursor()
-        self.c.execute("SELECT filename FROM IMAGES")
+        self.c.execute("SELECT filename FROM IMAGES") #CURRENT
         new_filenames = [x[0] for x in self.c.fetchall()]
 
-        for new_filepath in new_filenames:
+        for new_filepath in new_filenames: #FOR EVERY CURRENT FILEPATH
             if new_filepath == 'none':
                 continue
             old_filename = new_filepath.split('\\')[-1]
             print(old_filename)
-            other_c.execute('UPDATE IMAGES SET filename="{}" WHERE filename="{}"'.format(new_filepath,old_filename))
+            other_c.execute('UPDATE IMAGES SET filename="{}" WHERE filename LIKE "%{}%"'.format(new_filepath,old_filename)) #REPLACE OLD FILEPATH WITH CURRENT FILEPATH IF IT CONTAINS CURRENT FILENAME
         other_conn.commit()
+
+    def adjust_old_filenames(self):
+        print("Starting adjustment")
+        other_conn = sqlite3.connect('old_references.db')
+        other_conn.execute('PRAGMA foreign_keys=ON')
+        other_c = other_conn.cursor()
+        other_c.execute("SELECT filename FROM IMAGES")
+        curr_filenames = [x[0] for x in other_c.fetchall()]
+
+        for old_filepath in curr_filenames:
+            print("OLD FILEPATH: ",old_filepath)
+            new_filepath = old_filepath.replace('C:/Users/damet/Desktop/New folder/Programming/Github_Projects/Personal_WIP_Directory/_pythonsql-ELECTRON/web/files/references\\','D:/PaintingReferences\\')
+            other_c.execute('UPDATE IMAGES SET filename="{}" WHERE filename="{}"'.format(new_filepath,old_filepath))
+        other_conn.commit()
+
+    
 
         
     
@@ -721,6 +737,7 @@ def generate_thumbnail():
         count+=1
         print(count/file_count*100,'%')
         filename=filepath.split('\\')[-1]
+        # print(filename)
         curr = filepath
         # print(curr)
 
@@ -758,8 +775,13 @@ def generate_thumbnail():
                 im2 = ImageOps.fit(im,size,method=Image.LANCZOS,centering=(0.5,0.5))
                 im2.save(output)
 
-            except Exception as e: 
-                return e 
+            except Exception as e:
+                im=Image.open(curr)
+                rgb_im = im.convert('RGB')
+                # im.thumbnail(size,Image.ANTIALIAS)
+                im2 = ImageOps.fit(rgb_im,size,method=Image.LANCZOS,centering=(0.5,0.5))
+                im2.save(output)
+                # pass
 
 @eel.expose
 def py_check_if_exists(db_name,gen_thumbs,shuffle):
@@ -810,6 +832,7 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
         random.shuffle(current_folder)
     py_populate_drawer()
     # the_db.the_transfer()
+    # the_db.adjust_old_filenames()
     # the_db.clear_null_images()
     # get_metadata()
     # py_right_control()
@@ -825,7 +848,7 @@ def py_initial_routine():
     existing_databases = []
     
     for item in folders:
-        if item.split('.')[-1] == 'db' and item.split('.')[0]!='crashlogs':
+        if item.split('.')[-1] == 'db' and item.split('.')[0]!='crashlogs' and item.split('.')[0]!='test_crashlogs':
             existing_databases.append(item)
     eel.js_update_autocomplete(existing_databases)
 
