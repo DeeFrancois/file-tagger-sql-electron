@@ -3,6 +3,7 @@ from email.mime import base
 from fileinput import filename
 from genericpath import isdir, isfile
 from glob import glob
+from logging import root
 from operator import itemgetter
 import sqlite3
 import os
@@ -19,6 +20,7 @@ from multiprocessing import Pool
 import subprocess
 import tkinter as tk
 from tkinter import filedialog
+from PIL.ExifTags import TAGS
 
 #
 #TODO: Want to add Buttons between top container and bottom container, should match background color with barely visible borders seperated them
@@ -120,11 +122,29 @@ class my_database:
             self.add_source(item,source)
         self.populated=1
     def get_folder_from_db(self):
-        print("Retrieving files from database")
+        print("Retrieving files only from the Database")
         self.c.execute("SELECT filename FROM IMAGES")
         file_list=self.c.fetchall()
         file_list=[x[0] for x in file_list]
+        # self.get_root_folder_from_db()
         return file_list
+    def get_folder_from_folder(self):
+        print("Retrieving all files in Folder")
+        folder = self.get_root_folder_from_db()
+
+        glob_pattern = os.path.join(folder, '*')
+        file_list = sorted(glob(glob_pattern), key=os.path.getctime)
+        
+        file_list = [x for x in file_list]
+        # file_list = [x for x in file_list if x.split('.')[-1] in ['webm','png','mp4','jpg'] ]
+        return file_list
+    
+    def get_root_folder_from_db(self):
+        self.c.execute("SELECT filename FROM IMAGES")
+        file_list=self.c.fetchone()
+        root_folder = file_list[0].split('/')[-1].split('\\')[0]
+        root_filepath = file_list[0].split(root_folder)[0]+root_folder+'/'
+        return root_filepath
 
     def clear_null_images(self):
         self.c.execute("DELETE FROM IMAGES WHERE filename='none'")
@@ -188,9 +208,15 @@ class my_database:
     
     def get_metadata(self,filename):
         curr = filename
-        output = subprocess.check_output(
-            'ffprobe "{}" -show_entries format_tags=title -of compact=p=0:nk=1 -v 0'.format(curr)
-        )
+        exts = filename.split('.')[-1]
+        # print(exts)
+        output=''
+        if (exts == 'jpg' or exts == 'png' or exts == 'jpeg' or exts =='jfif'): #Unfinished, dont have a way to efficiently read/edit title property
+            return
+        else:
+            output = subprocess.check_output(
+                'ffprobe "{}" -show_entries format_tags=title -of compact=p=0:nk=1 -v 0'.format(curr)
+            )
         output = output.strip().decode('UTF-8')
         return output
 
@@ -445,8 +471,8 @@ eel.browsers.set_path('electron',resource_path('node_modules/electron/dist/elect
 # the_db = my_database(current_db)
 # folder_size = len(current_folder)
 
-
-def close(event):
+@eel.expose
+def close():
     sys.exit(0)
 
 @eel.expose
@@ -500,8 +526,18 @@ def py_get_tags():
         
     if len(source) > 20:
         source=source[0:20]+'...'
-        
+    
+    # get_more_details(current_folder[current_index])
     eel.js_display_source(filename,source)
+     #unfinished
+
+def get_more_details(filename):
+    image = Image.open(filename)
+    exifdata=image.getexif()
+    print(str(exifdata))
+    # print(exif)
+    eel.js_more_details(str(exifdata))
+
 
 @eel.expose
 def py_set_tags(tags):
@@ -512,12 +548,13 @@ def py_set_tags(tags):
     py_right_control()
 
 @eel.expose 
-def py_set_source(source): 
+def py_set_source(source,write_to_file): 
     # print("Setting video source")
     print(source)
     filepath = current_folder[current_index]
     the_db.add_source(filepath,source)
-    write_source_to_file(filepath,source)
+    if (write_to_file):
+        write_source_to_file(filepath,source)
     py_right_control()
 
 
@@ -655,11 +692,9 @@ def py_delete_image(input_filepath,delete_locally):
     # os.startfile(thumbnail)
 
     
-def write_source_to_file(filepath,source):
+def write_source_to_file(filepath,source): #TODO: Make this optional, then find a way to edit a video file without changing the creation date  
     curr = filepath
     filename=filepath.split('\\')[-1]
-    print(curr)
-    print(filename)
     print("Writing source to file")
     subprocess.call(
         # ffmpeg -i default.mp4 -metadata title="my title" -codec copy output.mp4 && mv output.mp4 default.mp4
@@ -671,7 +706,7 @@ def get_metadata():
     for filepath in current_folder:
         curr = filepath
         output = subprocess.check_output(
-            'ffprobe "{}" -show_entries format_tags=title -of compact=p=0:nk=1 -v 0'.format(curr)
+            'ffprobe "{}" -show_entries format_tags=title -of compact=p=0:nk=1 -v 0'.format(curr) 
         )
         output = output.strip().decode('UTF-8')
         if output != '':
@@ -762,7 +797,8 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
     # current_folder = sorted(glob(glob_pattern), key=os.path.getctime)
     # random.shuffle(current_folder)
     the_db = my_database(current_db)
-    current_folder=the_db.get_folder_from_db()
+    # current_folder=the_db.get_folder_from_db()
+    current_folder=the_db.get_folder_from_folder()
     base_list=current_folder
     the_db.get_tag_list()
     folder_size = len(current_folder)

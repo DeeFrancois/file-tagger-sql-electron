@@ -194,6 +194,11 @@ function js_display_source(filename,source){
     // console.log(shortened_source);
     document.querySelector('.source-bar').innerText=`- Filename: ${filename} | Source: ${source}`;
 }
+
+eel.expose(js_more_details); //unfinished, wait until I have an ffprobe for images
+function js_more_details(details){
+    document.querySelector('.source-bar').innerText+=` More Details: ${details}`;
+}
 function swap_video(e){
     // console.log("SWAPVIDEO:");
     // console.log(e);
@@ -214,7 +219,7 @@ if(event.key=="Enter" && event.srcElement.id=="control-bar"){
 else if(event.key=="Enter" && event.srcElement.id=="input-tags"){
     if (source_mode){
         // console.log('Adding source to video');
-        eel.py_set_source(document.querySelector('#input-tags').value);
+        eel.py_set_source(document.querySelector('#input-tags').value,document.querySelector('#control-writetofile'.checked));
         document.getElementById('input-tags').value='';
         if(!source_hold){
             // console.log("Unheld");
@@ -273,9 +278,8 @@ $(window).resize(function(e){
     // console.log(document.body.getBoundingClientRect().width);
     adjust_thumb_widths();
     if(document.body.getBoundingClientRect().width<620){
-        if(sidebar_flag=1){
-        hide_sidebar();
-        sidebar_flag=0;
+        if(sidebar_flag==0){
+        toggle_sidebar();
         }
     }
     // else{
@@ -412,6 +416,11 @@ else{ //select
 }
 document.getElementById('input-tags').focus();
 }
+
+function exit_program(){
+    eel.close();
+    window.close();
+}
 eel.expose(js_trigger_hover);
 function js_trigger_hover(){ //Works but a bit buggy
 document.querySelector('.video-player').onmouseover();
@@ -446,13 +455,16 @@ document.body.onmousedown = function(e) {
 }
 
 $(document).bind("keydown", function(e){ 
+    e = e || window.event;
+    var charCode = e.which || e.keyCode;
+    if(charCode== 27) exit_program();
+    if(charCode== 186) window.location.reload();
     if (e.target.nodeName.toLowerCase()=='input'){
         if (!e.target.value==''){
             return;
         }
     }
-    e = e || window.event;
-    var charCode = e.which || e.keyCode;
+    
     if(charCode == 39) eel.py_right_control();
     if(charCode == 37) eel.py_left_control();
 });
