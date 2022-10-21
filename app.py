@@ -869,7 +869,8 @@ def py_initial_routine():
     existing_databases = []
     
     for item in folders:
-        if item.split('.')[-1] == 'db' and item.split('.')[0]!='crashlogs' and item.split('.')[0]!='test_crashlogs':
+        # if item.split('.')[-1] == 'db' and item.split('.')[0]!='crashlogs' and item.split('.')[0]!='test_crashlogs':
+        if item.split('.')[-1] == 'db':
             existing_databases.append(item)
     eel.js_update_autocomplete(existing_databases)
 
