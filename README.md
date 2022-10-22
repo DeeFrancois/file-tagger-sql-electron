@@ -4,7 +4,7 @@ A file tagging program for organization that uses SQL to create and manage your 
 
 The interface allows you to easily add/remove tags, and sort by them as well. This can also be used to manipulate "title" metadata so that you can embed the source of the image/video into the file itself.
 
-![demo](https://github.com/DeeFrancois/netflix-dual-subs/blob/master/DocumentImages/demo.gif)
+![demo](https://github.com/DeeFrancois/FileTagger_ElectronVersion/blob/main/DocumentationImages/demo.png)
 
 
 ## Motivation
@@ -12,7 +12,7 @@ One of my hobbies is digital painting so I needed a way to organize my reference
 
 ## How to use
 
-![demo](https://github.com/DeeFrancois/netflix-dual-subs/blob/master/DocumentImages/settings.gif)
+![demo](https://github.com/DeeFrancois/FileTagger_ElectronVersion/blob/main/DocumentationImages/demo.png)
 
 
 ## How it works
