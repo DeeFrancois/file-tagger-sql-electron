@@ -266,10 +266,16 @@ var source_hold = 0;
 function adjust_thumb_widths(){
     let curr_width = (document.body.getBoundingClientRect().width/909 * 100 - 100).toFixed(0);
     // console.log(curr_width+'%');
+    let curr_height = (document.body.getBoundingClientRect().height)
     if ( curr_width%20 ==0){
         // console.log("RESIZE");
         document.querySelectorAll('.img-container').forEach(e=>e.style.width=100/(5+(curr_width/20))+'%');
 
+    }
+    if(curr_height>800){
+        document.querySelectorAll('.img-container').forEach(e=>e.style.height=100/3+'%');
+    } else {
+    document.querySelectorAll('.img-container').forEach(e=>e.style.height='100%');
     }
 }
 $(window).resize(function(e){

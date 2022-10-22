@@ -132,7 +132,7 @@ class my_database:
         print("Retrieving all files in Folder")
         folder = self.get_root_folder_from_db()
 
-        glob_pattern = os.path.join(folder, '*')
+        glob_pattern = os.path.join(folder, '*.*')
         file_list = sorted(glob(glob_pattern), key=os.path.getctime)
         
         file_list = [x for x in file_list]
@@ -493,7 +493,7 @@ def close():
 
 @eel.expose
 def hide_based_on_tags(): #This filter works for first display (so to hide stuff for demos, but will need to move filter functions to the actual the_db class for it to work within real usage)
-    filter_list = ['moviestill','test','poster']
+    filter_list = ['poster','test']
     current_list = current_folder
     for ind,item in enumerate(current_list):
         filter_flag = False
@@ -632,7 +632,7 @@ def py_populate_drawer():
     eel.js_clear_drawer()
     eel.js_change_database_label(current_db+'.db')
     current_drawer_index=0
-    for item in current_folder[current_drawer_index:1000]:
+    for item in current_folder[current_drawer_index:3000]:
         if (item is 'none'):
             continue
         # print(item)
