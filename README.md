@@ -42,4 +42,6 @@ requirements.txt file included so you use the following command to install them 
 ## Current Issues
 Not sure if I can deploy this as an exe at the moment and honestly, I don't really plan to try at the moment.
 
+I'll make a tutorial video soon. If you're actually interested in using this just let me know and I'll help you out with the setup.
+
 Licensed under the [MIT License](LICENSE).
