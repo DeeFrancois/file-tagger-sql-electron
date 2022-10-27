@@ -1,0 +1,14 @@
+/files
+/ignorethis
+/node_modules
+/testdatabase
+web/files
+my_filesystem.db
+crashlogs.db
+test_crashlogs.db
+my_database.db
+ffmpeg.exe
+PaintingReferences.db
+testing_filepath.py
+thewall.db
+.gitignore

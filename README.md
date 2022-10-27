@@ -1,11 +1,21 @@
 # File Tagging with SQL
 
+<<<<<<< HEAD
 A file tagging program for organization that uses SQL to create and manage your own filesystem. 
 
 The interface allows you to easily add/remove tags, and sort by them as well. This can also be used to manipulate "title" metadata so that you can embed the source of the image/video into the file itself.
 
 ![demo](https://github.com/DeeFrancois/FileTagger_ElectronVersion/blob/main/DocumentationImages/demo.png)
 
+=======
+A program built for organizing a folder of art references by specified descriptive tags.
+
+The interface allows you to easily add, remove, and sort by tags. It also allows specifying the source of the file. The information is stored in a database which the program manipulates using SQL. If desired, the information can be written into the metadata of the file as well.* 
+
+![demo](https://github.com/DeeFrancois/FileTagger_ElectronVersion/blob/main/DocumentationImages/demo.png)
+
+<sup>*Metadata manipulation currently only works for videos</sup>
+>>>>>>> 655369ddbb39bf40424e28316cf406645139c56e
 
 ## Motivation
 One of my hobbies is digital painting so I needed a way to organize my reference photos. I was disapointed with the windows tagging system so I figured I'd just make my own. 
