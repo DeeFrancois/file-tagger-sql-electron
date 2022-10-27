@@ -493,11 +493,7 @@ def close():
 
 @eel.expose
 def hide_based_on_tags(): #This filter works for first display (so to hide stuff for demos, but will need to move filter functions to the actual the_db class for it to work within real usage)
-<<<<<<< HEAD
     filter_list = ['poster','test','nude']
-=======
-    filter_list = ['poster','test']
->>>>>>> 655369ddbb39bf40424e28316cf406645139c56e
     current_list = current_folder
     for ind,item in enumerate(current_list):
         filter_flag = False
@@ -854,11 +850,7 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
         generate_thumbnail()
     if shuffle:
         random.shuffle(current_folder)
-<<<<<<< HEAD
     hide_based_on_tags()
-=======
-    # hide_based_on_tags()
->>>>>>> 655369ddbb39bf40424e28316cf406645139c56e
     py_populate_drawer()
     # the_db.the_transfer()
     # the_db.adjust_old_filenames()
