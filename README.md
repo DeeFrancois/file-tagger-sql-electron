@@ -4,7 +4,7 @@ A program built for organizing a folder of art references by specified descripti
 
 ![demo](https://github.com/DeeFrancois/FileTagger_ElectronVersion/blob/main/DocumentationImages/demo.png)
 
-The interface allows you to easily add, remove, and sort by tags. It also allows specifying the source of the file. The information is stored in a database which the program manipulates using SQL. If desired, the information can be written into the metadata of the file as well.* 
+The interface allows you to easily add, remove, and sort by tags. It also allows specifying the source of the file. The information is stored in a database but can also be written into the metadata of the files as well* 
 
 <sup>*Metadata manipulation currently only works for videos</sup>
 
