@@ -1,7 +1,7 @@
 {
   "name": "_pythonsql",
-  "version": "1.0.0",
-  "description": "File tagger with Electron EEL and SQL",
+  "version": "1.1.0",
+  "description": "File tagging with Electron, Python-EeL,and SQL",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
