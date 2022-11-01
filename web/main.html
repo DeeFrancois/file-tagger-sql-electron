@@ -57,6 +57,10 @@ body{
     /* background-color: red; */
     min-height: 100vh;
     height: 100%;
+
+    background:linear-gradient(to bottom, rgba(36, 36, 36, 0.8)0%, rgba(36, 36, 36, 0.8) 33.000001%, rgba(15,15,15,1.000) 100%);
+    /* background:linear-gradient(to top, rgba(36, 36, 36, 0.8)0%, rgba(36, 36, 36, 0.8) 33.000001%, rgba(15,15,15,1.000) 100%); */
+    overflow-x: hidden;
 }
 .video-container{
     display: block;
@@ -73,7 +77,7 @@ body{
 .sidebar-container{
     position: relative;
     display: inline-block;
-    background-color: rgb(36, 36, 36,.96);
+    /* background-color: rgb(36, 36, 36,.96); UNCOMMENT IF DISABLE BLURREDBACKGROUND*/
     
     /* width: 256px; */
     width:30%;
@@ -84,13 +88,15 @@ body{
     border-right: 0px;
     border-top: 0px;
     border-bottom: 0px;
+    background: linear-gradient(0deg,#00000088 20%, #ffffff44 100%),linear-gradient(180deg, #00000088 10%, #ffffff44 60%);
+    /* background:linear-gradient(to bottom, rgba(101,83,61,0.800) 0%, rgba(101,83,61,0.298) 33.000001%, rgba(15,15,15,1.000) 100%); */
 
 
 }
 .control-box{
     position: relative;
     display: inline-block;
-    background-color: rgb(36, 36, 36,.96);
+    /* background-color: rgb(36, 36, 36,.96); UNCOMMENT IF DISABLE BLURREDBACKGROUND*/ 
     
 
     height: 100%;
@@ -140,7 +146,7 @@ body{
     float: left;
     width:calc(100% / 6);
     height: 100%;
-    background-color: rgb(36, 36, 36,.96);
+    background-color: rgb(36, 36, 36,.96); 
     color: rgb(206, 206, 206);
     text-align: center;
     border: 0;
@@ -492,7 +498,7 @@ button.p-clicked{
     height: 5%;
     /* background-color: rgb(36, 36, 36,.96); */
     background: transparent;
-    color: rgb(206, 206, 206);
+    color: rgb(241,241,241);
     text-align: center;
     border-style: solid;
     border: 0;
@@ -522,6 +528,19 @@ input[type="checkbox"]{
     text-align: center;
     position: absolute;
 }
+.blurred-container{
+    position: absolute;
+
+    width: 400%;
+    height: 70vh;
+    transform: translateX(-45%);
+    opacity: 0.7;
+    background-color: transparent;
+    /* opacity: 1; */
+    -webkit-filter: blur(30px);
+    filter: blur(30px);
+    /* background:linear-gradient(to bottom, rgba(101,83,61,0.800) 0%, rgba(101,83,61,0.298) 33.000001%, rgba(15,15,15,1.000) 100%); */
+}
 
 </style>
 <script src="http://localhost:8000/jquery-3.5.1.min.js"></script>
@@ -533,6 +552,9 @@ input[type="checkbox"]{
 <body>
     <!-- <div class="titlebar"></div> -->
     <div class="grid-container">
+        <div class="blurred-container">
+        <img class="blurred-image" id="blurred-image" style="height:100%;width: 100%;" src="atom://D:\PaintingReferences\about_time-1.jpg"></img>
+        </div>
 <!-- The Grid -->
         <div class="top-container">
             <div class="video-container">
@@ -545,7 +567,7 @@ input[type="checkbox"]{
                 <div class="video-box">
                     <div class="hidden source-bar">- Filename: | Source: </div>
                     <video class="video-player" autoplay controls muted src=""></video>
-                    <img class="img-player"></img>
+                    <img class="img-player" onload="document.getElementById('blurred-image').src=this.src"></img>
                 </div>
                 
                 <div class="bottom-vcbars"oncontextmenu="return false;">

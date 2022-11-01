@@ -22,25 +22,16 @@ import tkinter as tk
 from tkinter import filedialog
 from PIL.ExifTags import TAGS
 
-#
-#TODO: Want to add Buttons between top container and bottom container, should match background color with barely visible borders seperated them
-#like the text is lasered into the background
-#Buttons: (Hide) Sidebar, bottom bar, Control box, Loop, Mute, Autoplay next vid, 
 #Split sidebar with two buttons at top (or tabs?); All tags, Current vid metadata
-#FIX "orphan"
 #http://howto.philippkeller.com/2005/04/24/Tags-Database-schemas/ Toxi solution
 #https://stackoverflow.com/questions/20856/recommended-sql-database-design-for-tags-or-tagging
+
 class my_database:
     def __init__(self,current_db) -> None:
         self.tag_list = []
-        #self.folder = 'web/files'
-        # self.loaded_database = input('Enter database name: ')
-        # self.folder = input('files or other')
         self.current_db = current_db
         self.loaded_database=current_db+'.db'
         self.folder=r'C:\Users\damet\Desktop\New folder\Programming\Github_Projects\Personal_WIP_Directory\_pythonsql-ELECTRON\testdatabase'
-       
-        
         self.populated=0
 
         if not isfile(self.loaded_database):
@@ -54,7 +45,6 @@ class my_database:
             self.populated=1
             # self.write_metadata_to_db(self.folder)
             self.get_tag_list()
-            # self.check_tags()
 
     def fresh_database_creation(self):
         self.conn = sqlite3.connect(self.loaded_database)
@@ -98,18 +88,14 @@ class my_database:
         # self.exec_taging()
 
     def add_folder_to_db(self):
-        print("ADDING FOLDER")
         root = tk.Tk()
         root.withdraw()
-
         folder = filedialog.askdirectory()
 
-        # the_list=os.listdir(folder)
-        # the_list= [x for x in the_list if os.path.isfile(folder+'/'+x) ]
         glob_pattern = os.path.join(folder, '*')
         the_list = sorted(glob(glob_pattern), key=os.path.getctime)
-        
         the_list = [x for x in the_list if x.split('.')[-1] in ['webm','png','mp4','jpg','jpeg'] ]
+
         file_count = len(the_list)
         count = 0
         for item in the_list:
@@ -120,7 +106,9 @@ class my_database:
             source = self.get_metadata(item)
             # print("Adding: ",item, "with Source: ",source," to database")
             self.add_source(item,source)
+
         self.populated=1
+
     def get_folder_from_db(self):
         print("Retrieving files only from the Database")
         self.c.execute("SELECT filename FROM IMAGES")
@@ -128,13 +116,13 @@ class my_database:
         file_list=[x[0] for x in file_list]
         # self.get_root_folder_from_db()
         return file_list
+
     def get_folder_from_folder(self):
         print("Retrieving all files in Folder")
         folder = self.get_root_folder_from_db()
 
         glob_pattern = os.path.join(folder, '*.*')
         file_list = sorted(glob(glob_pattern), key=os.path.getctime)
-        
         file_list = [x for x in file_list]
         # file_list = [x for x in file_list if x.split('.')[-1] in ['webm','png','mp4','jpg'] ]
         return file_list
@@ -192,11 +180,6 @@ class my_database:
             new_filepath = old_filepath.replace('C:/Users/damet/Desktop/New folder/Programming/Github_Projects/Personal_WIP_Directory/_pythonsql-ELECTRON/web/files/references\\','D:/PaintingReferences\\')
             other_c.execute('UPDATE IMAGES SET filename="{}" WHERE filename="{}"'.format(new_filepath,old_filepath))
         other_conn.commit()
-
-    
-
-        
-    
     
     def add_image_to_db(self,filename):
         print("Adding Image to database: ",filename)
@@ -205,7 +188,7 @@ class my_database:
         source = self.get_metadata(filename)
         print("Adding: ",filename, "with Source: ",source," to database")
         self.add_source(filename,source)
-        # print("ADDED")
+
     def delete_image_from_db(self,filename):
         print("Removing file from database: ",filename)
         self.c.execute("DELETE FROM IMAGES WHERE filename='{}'".format(filename))
@@ -262,11 +245,6 @@ class my_database:
 
     def delete_tag(self,tag):
         print("Deleting tag: ",tag)
-        # # SELECT TAGS.description FROM TAGS JOIN IMAGE_TAG ON TAGS.tag_id = IMAGE_TAG.tag_id WHERE IMAGE_TAG.image_id={}
-        # self.c.execute("SELECT tag_id FROM TAGS WHERE description='{}'".format(tag))
-        # curr_tag_id=self.c.fetchone()
-        # curr_tag_id=curr_tag_id[0]
-        # self.c.execute("SELECT * FROM IMAGE_TAG WHERE tag_id='{}'".format(curr_tag_id))
         self.c.execute("SELECT tag_id FROM TAGS WHERE description='{}'".format(tag))
         tag_id = self.c.fetchone()
         tag_id = tag_id[0]
@@ -289,7 +267,6 @@ class my_database:
         self.conn.commit()
         self.c.execute('SELECT * FROM IMAGE_TAG WHERE tag_id={}'.format(tag_id))
         if self.c.fetchone() == None:
-            # print("NO MORE")
             self.c.execute('DELETE FROM TAGS WHERE tag_id={}'.format(tag_id))
             self.conn.commit()
         eel.js_clear_taglist()
@@ -322,9 +299,6 @@ class my_database:
             self.conn.commit()
     
     def add_source(self,filename,source):
-        # self.c.execute("SELECT image_id FROM IMAGES WHERE filename='{}'".format(filename))
-        # curr_image_id = self.c.fetchone()[0]
-        # print(curr_image_id)
         self.c.execute('UPDATE IMAGES SET source="{}" WHERE filename="{}"'.format(source,filename))
         self.conn.commit()
             
@@ -332,7 +306,6 @@ class my_database:
     def exec_taging(self):
         list_of_files = (os.listdir(self.folder))
         random.shuffle(list_of_files)
-        # print(len(list_of_files))
         
         for item in list_of_files:
             # print(os.getcwd()+'\\'+self.folder+'\\'+item)
@@ -345,7 +318,6 @@ class my_database:
             if user_input == 'q':
                 return
             user_input = user_input.split(' ')
-            # print("Applying tags: ", user_input, " to image")
 
             for tag in user_input:
                 if not self.if_tag_exists(tag):
@@ -850,7 +822,7 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
         generate_thumbnail()
     if shuffle:
         random.shuffle(current_folder)
-    hide_based_on_tags()
+    # hide_based_on_tags()
     py_populate_drawer()
     # the_db.the_transfer()
     # the_db.adjust_old_filenames()
