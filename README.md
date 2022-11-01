@@ -40,8 +40,9 @@ requirements.txt file included so you use the following command to install them 
     - The program uses the ffmpeg and ffprobe libraries to manipulate the metadata. Writing to the file is optional as it requires replacing the file with a new copy which may overwrite other potentially important metadata like dates.
 
 ## Current Issues
-Not sure if I can deploy this as an exe at the moment and honestly, I don't really plan to try at the moment.
 
-I'll make a tutorial video soon. If you're actually interested in using this just let me know and I'll help you out with the setup.
+- It may take some time before this is deployed as an exe.
+
+- I'll make a tutorial video soon. If you're actually interested in using this just let me know and I can help you out with the setup.
 
 Licensed under the [MIT License](LICENSE).
