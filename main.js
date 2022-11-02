@@ -16,7 +16,7 @@ let mainWindow
 
 app.on("ready", () => {
     const mainWindow = new BrowserWindow({
-      width: 909,
+      width: 1050,
       height: 690,
       // minHeight: 690,
       minWidth: 542,

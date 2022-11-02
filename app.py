@@ -615,6 +615,7 @@ def py_populate_drawer():
     py_initial_routine()
     py_populate_tags()
     py_right_control()
+    eel.js_refresh_thumb_size()
 
 @eel.expose
 def py_open_file(relpath):
@@ -743,7 +744,8 @@ def generate_thumbnail():
         exts = filename.split('.')[-1]
         # print(exts)
         size=(236,326)
-
+        if exts == 'ini':
+            continue
         if not(exts == 'jpg' or exts == 'png' or exts == 'jpeg' or exts =='jfif'):
             
             subprocess.call(

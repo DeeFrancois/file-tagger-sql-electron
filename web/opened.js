@@ -258,18 +258,19 @@ function scrollerfunc(event){
 //     eel.py_request_more_filenames();
 // }
 }
-var size = [909,690];
+var size = [1050,690];
 var source_mode = 0;
 var delete_mode = 0;
 var delete_hold = 0;
 var source_hold = 0;
 function adjust_thumb_widths(){
-    let curr_width = (document.body.getBoundingClientRect().width/909 * 100 - 100).toFixed(0);
+    let curr_width = (document.body.getBoundingClientRect().width/1050 * 100 - 100).toFixed(0);
     // console.log(curr_width+'%');
     let curr_height = (document.body.getBoundingClientRect().height)
-    if ( curr_width%20 ==0){
+    console.log(curr_width % 20);
+    if ( curr_width%20 >=17 || curr_width%20 <=3){
         // console.log("RESIZE");
-        document.querySelectorAll('.img-container').forEach(e=>e.style.width=100/(5+(curr_width/20))+'%');
+        document.querySelectorAll('.img-container').forEach(e=>e.style.width=100/(5+Math.floor(curr_width/20))+'%');
 
     }
     if(curr_height>800){
@@ -310,6 +311,20 @@ $(window).resize(function(e){
     // }
 });
 
+eel.expose(js_refresh_thumb_size);
+function js_refresh_thumb_size(){
+    let curr_width = (document.body.getBoundingClientRect().width/909 * 100 - 100).toFixed(0);
+    // console.log(curr_width+'%');
+    let curr_height = (document.body.getBoundingClientRect().height)
+    console.log(curr_width % 20);
+    document.querySelectorAll('.img-container').forEach(e=>e.style.width=100/(5+Math.floor(curr_width/20))+'%');
+
+    if(curr_height>800){
+        document.querySelectorAll('.img-container').forEach(e=>e.style.height=100/3+'%');
+    } else {
+    document.querySelectorAll('.img-container').forEach(e=>e.style.height='100%');
+    }
+}
 eel.expose(js_add_to_drawer);
 function js_add_to_drawer(e,folder_choice,thumb_path){
     // console.log(e);
