@@ -9,6 +9,7 @@ var mute_flag=0;
 var sidebar_flag=0;
 var drawer_flag=0;
 var time;
+var drawer_search_active=0;
 var inactivityTime = function () {
     window.onload = resetTimer;
     // DOM Events
@@ -160,6 +161,8 @@ eel.expose(js_display_file);
 function js_display_file(filepath,db){
     // console.log(filepath);
     var exts = filepath.split('.').pop();
+    var filename = filepath.split('\\').pop().split('.')[0];
+    
     // console.log(exts);
     if (exts=='jpg' || exts=='png' || exts=='jpeg' || exts=='jfif'){
         
@@ -176,6 +179,14 @@ function js_display_file(filepath,db){
         document.getElementsByClassName('video-player')[0].src='atom://'+filepath;
         
 }
+try{
+    console.log(filename);
+    document.querySelector(`[data-img*="${filename}"]`).scrollIntoView();
+}
+catch(e){
+    console.log("ERROR");
+}
+
 }
 
 eel.expose(js_display_tags);
@@ -187,6 +198,7 @@ function js_display_tags(tags){
     catch(e){
         document.getElementsByClassName('current-tags')[0].innerText=tags;
     }
+    
 }
 
 eel.expose(js_display_source);
@@ -207,13 +219,44 @@ eel.py_update_index(e);
 //and then have the python react to that index change in basically the same way as the right control button
 
 }
+function drawerSearch(e){
+    // console.log(e);
+    // let curr = document.querySelector('.drawer-search-bar').value;
+    try{
+        console.log("SEARCHING: ",e);
+    document.querySelector(`[data-img*="${e}"]`).scrollIntoView();
+    }
+    catch(e){
+        console.log(e);
+        // console.log(e);
+    }
+}
 function clickPress(event){
-// console.log(event);
-if(event.key=="Enter" && event.srcElement.id=="control-bar"){
+console.log(event);
+if(event.key=="/"){
+    if (drawer_search_active){
+        drawer_search_active=0;
+        document.getElementById('drawer-search-bar').style.display='none';
+        // document.getElementById('input-tags').focus();
+        document.getElementById('drawer-search-bar').value='';
+    }
+    else{
+        drawer_search_active=1;
+        document.getElementById('drawer-search-bar').style.display='block';
+        document.getElementById('drawer-search-bar').value='';
+        setTimeout(()=>{
+            document.getElementById('drawer-search-bar').focus();
+
+        },100);
+    }
+}
+else if(event.key=="Enter" && event.srcElement.id=="control-bar"){
     var new_db = document.getElementById('control-bar').value;
     eel.py_check_if_exists(new_db,document.querySelector('#control-genthumbs').checked,document.querySelector('#control-shuffle').checked);
     document.getElementById('control-bar-label').innerText=document.getElementById('control-bar').value+'.db';
     document.getElementById('control-bar').value='';
+    document.querySelector('.control-bar').blur();
+    
     
 }
 else if(event.key=="Enter" && event.srcElement.id=="input-tags"){
@@ -560,6 +603,7 @@ document.querySelector('.control-bar').addEventListener('change',function(e){
     eel.py_check_if_exists(new_db,document.querySelector('#control-genthumbs').checked,document.querySelector('#control-shuffle').checked);
     document.getElementById('control-bar-label').innerText=document.getElementById('control-bar').value+'.db';
     document.getElementById('control-bar').value='';
+    document.querySelector('.control-bar').blur();
 });
 document.querySelector('.top-pin').addEventListener('click',function(e){
     // console.log("Pinning");
