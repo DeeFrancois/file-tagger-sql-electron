@@ -219,6 +219,26 @@ eel.py_update_index(e);
 //and then have the python react to that index change in basically the same way as the right control button
 
 }
+function cleartagSearch(){
+    document.querySelector('.tag-search-bar').value='';
+    document.querySelector('.sidebar-container').querySelectorAll('button').forEach(e=>e.style.color='white');
+    
+}
+function tagSearch(elem){
+    //Clear
+    if (elem==''){
+        document.querySelector('.sidebar-container').querySelectorAll('button').forEach(e=>e.style.color='white');
+        return;
+    }
+    document.querySelector('.sidebar-container').querySelectorAll('button').forEach(e=>e.style.color='white');
+    //
+    document.querySelector('.sidebar-container').querySelectorAll('button').forEach(function(e){
+        if (e.innerText.includes(elem)){
+            console.log(e);
+            e.style.color='yellow';
+        }
+    });
+}
 function drawerSearch(e){
     // console.log(e);
     // let curr = document.querySelector('.drawer-search-bar').value;
@@ -420,6 +440,8 @@ document.getElementsByClassName('video-player').src=filename;
 }
 
 function get_batch_based_on(elem){
+    cleartagSearch();
+    
 const button = elem;
 // console.log(button.innerText);
 eel.py_retrieve_batch_with_tag(button.innerText);
