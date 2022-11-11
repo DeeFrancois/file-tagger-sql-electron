@@ -184,6 +184,7 @@ try{
     document.querySelector(`[data-img*="${filename}"]`).scrollIntoView();
 }
 catch(e){
+    console.log(e);
     console.log("ERROR");
 }
 
@@ -528,7 +529,7 @@ Array.from(the_list).forEach(function(e){
     opt.value=e.split('.db')[0];
     document.querySelector('#suggestions').appendChild(opt);
 
-})
+});
 
 }
 
