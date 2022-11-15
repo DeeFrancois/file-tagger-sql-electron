@@ -494,12 +494,13 @@ def py_left_control():
         print(current_index)
         py_left_control()
         return
-    eel.js_display_file(current_folder[current_index],current_db)
+    eel.js_display_file(current_folder[current_index],current_db,current_index)
     eel.js_trigger_hover()
     py_get_tags()
     
 @eel.expose
 def py_right_control():
+    print("RIGHT CONTROL")
     global current_index
     if current_index+1 <= folder_size-1:
         current_index=current_index+1
@@ -510,7 +511,7 @@ def py_right_control():
         print("Hidden post")
         py_right_control()
         return
-    eel.js_display_file(current_folder[current_index],current_db)
+    eel.js_display_file(current_folder[current_index],current_db,current_index)
     eel.js_trigger_hover()
     py_get_tags()
 
@@ -681,10 +682,11 @@ def py_hide_image(filepath):
 
 @eel.expose
 def py_delete_image(input_filepath,delete_locally):
-    # print("Deleting: ",input_filepath)
-    # 'data-img':`files/${folder_choice}/`+e,
-    #files/thumbs/${folder_choice}/`+e.replace('.webm','.jpg').replace('.mp4','.jpg')
-    current_folder[current_folder.index(input_filepath)]='none'
+    global current_index
+    global folder_size
+    # current_folder[current_folder.index(input_filepath)]='none'
+    current_folder.pop(current_folder.index(input_filepath))
+    folder_size-=1
     the_db.delete_image_from_db(input_filepath)
     filename=input_filepath.split('\\')[-1]
     thumbnail = 'files/thumbs/'+current_db+'/'+filename.replace(filename.split('.')[-1],'jpg')
@@ -699,6 +701,11 @@ def py_delete_image(input_filepath,delete_locally):
         os.remove(thumbnail)
     # os.startfile(filepath)
     # os.startfile(thumbnail)
+    if current_index-1 > -1:
+        current_index-=1
+    else:
+        current_index=folder_size-1
+    py_right_control()
 
     
 def write_source_to_file(filepath,source): #TODO: Make this optional, then find a way to edit a video file without changing the creation date  
