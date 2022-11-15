@@ -31,7 +31,7 @@ class my_database:
         self.tag_list = []
         self.current_db = current_db
         self.loaded_database=current_db+'.db'
-        self.folder=r'C:\Users\damet\Desktop\New folder\Programming\Github_Projects\Personal_WIP_Directory\_pythonsql-ELECTRON\testdatabase'
+        # self.folder=r'C:\Users\damet\Desktop\New folder\Programming\Github_Projects\Personal_WIP_Directory\_pythonsql-ELECTRON\testdatabase'
         self.populated=0
 
         if not isfile(self.loaded_database):

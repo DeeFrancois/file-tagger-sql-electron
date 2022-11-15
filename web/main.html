@@ -191,9 +191,8 @@ body{
     display: block;
     float: left;
     scroll-snap-type: y mandatory;
-    /* scroll-margin: -50px; */
     scroll-behavior:smooth;
-    
+    margin: 0;
     overflow-x:hidden;
     overflow-y: scroll;
     width: 70%;
@@ -210,7 +209,7 @@ body{
     position: relative;
     display:block;
     scroll-snap-align:start;
-    scroll-snap-stop:always;
+    /* scroll-snap-stop:always; */
     
     width: 20%;
     height: 100%;
@@ -241,7 +240,7 @@ body{
     opacity: 1;
 }
 .drawer-image{
-
+    margin: 0;
     /* display: block; */
     /* scroll-snap-align:end; */
     object-fit:cover;
@@ -584,7 +583,7 @@ input[type="checkbox"]{
         <div class="top-container">
             <div class="video-container">
                 <div class="top-bar titlebar">
-                    <div class="top-pin" >◇</div>
+                    <div class="top-pin" >🗑</div>
                     <div class="top-x"></div>
                     <span class="current-tags">~Tags Will Appear Here</span>
                 </div>

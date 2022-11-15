@@ -10,6 +10,9 @@ var sidebar_flag=0;
 var drawer_flag=0;
 var time;
 var drawer_search_active=0;
+var scrollHeight=0;
+var last_clicked;
+var scroll_index=0;
 var inactivityTime = function () {
     window.onload = resetTimer;
     // DOM Events
@@ -160,6 +163,7 @@ function js_confirmation(db_name){
 eel.expose(js_display_file);
 function js_display_file(filepath,db){
     // console.log(filepath);
+    console.log(last_clicked);
     var exts = filepath.split('.').pop();
     var filename = filepath.split('\\').pop().split('.')[0];
     
@@ -216,6 +220,7 @@ function swap_video(e){
     // console.log("SWAPVIDEO:");
     // console.log(e);
 eel.py_update_index(e);
+
 //instead of doing the script manually here, I can just make a request to change the index
 //and then have the python react to that index change in basically the same way as the right control button
 
@@ -347,32 +352,14 @@ $(window).resize(function(e){
 
     // window.resizeTo(size[0],size[1]);
     // console.log(document.body.getBoundingClientRect().width);
+    
     adjust_thumb_widths();
     if(document.body.getBoundingClientRect().width<620){
         if(sidebar_flag==0){
         toggle_sidebar();
         }
     }
-    // else{
-    //     show_sidebar();
-    //     sidebar_flag=1;
-    // }
-    // if (document.body.getBoundingClientRect().width > 1700){
-        // console.log("Img width: ",document.querySelector('.img-container').style.width);
-    //     Array.from(document.querySelectorAll('.img-container')).forEach(e=>e.style.width=100/15+'%');
-    //     // size_checkpoint=size_checkpoint*1.3;
-    // }
-    
-    // else if (document.body.getBoundingClientRect().width > 1100){
-        // console.log("Img width: ",document.querySelector('.img-container').style.width);
-    //     Array.from(document.querySelectorAll('.img-container')).forEach(e=>e.style.width=100/9+'%');
-    //     // size_checkpoint=size_checkpoint*1.3;
-    // }
-    // else if (document.body.getBoundingClientRect().width > 500){
-        // console.log("Img width: ",document.querySelector('.img-container').style.width);
-    //     Array.from(document.querySelectorAll('.img-container')).forEach(e=>e.style.width=100/5+'%');
-    //     // size_checkpoint=size_checkpoint*1.3;
-    // }
+   
 });
 
 eel.expose(js_refresh_thumb_size);
@@ -399,7 +386,7 @@ $('<div>',{
     class:'drawer-image',
     src:`${thumb_path}`,
     'data-img':e,
-    click:function(){swap_video(e)}
+    click:function(){swap_video(e);last_clicked=[this,e];}
 })).append($('<div>',{
     class:'img-overlay',
     text:'Delete',
@@ -534,6 +521,28 @@ Array.from(the_list).forEach(function(e){
 }
 
 $(document).ready(function(){
+    document.addEventListener("wheel", (event) => {
+        if (event.target.className=='drawer-image' || event.target.className=='drawer-image-container'){
+            event.preventDefault();
+            event.stopPropagation();
+            var elem = document.querySelector('.drawer-image-container');
+            
+            if(event.deltaY>0){
+                scroll_index+=6;
+                elem.scrollTo({
+                    left:0,
+                    top:elem.scrollTop+100 < elem.scrollHeight ? elem.scrollTop+100 : 0,
+                    behavior:'instant'});
+                }
+                else{
+                    elem.scrollTo({
+                        left:0,
+                        top:elem.scrollTop-0 > 0 ? elem.scrollTop-100 : 0,
+                        behavior:'instant'});
+                }
+        }
+      }, { passive: false });
+
 document.body.onmousedown = function(e) {
     if(e.button == 1) {
         e.preventDefault();
@@ -630,14 +639,15 @@ document.querySelector('.control-bar').addEventListener('change',function(e){
 });
 document.querySelector('.top-pin').addEventListener('click',function(e){
     // console.log("Pinning");
-    if(pinned==0){
-    pinned=1;
-    e.target.innerText='◈';
-    }
-    else{
-        pinned=0;
-        e.target.innerText='◇';
-    }
+    // if(pinned==0){
+    // pinned=1;
+    // e.target.innerText='◈';
+    // }
+    // else{
+    //     pinned=0;
+    //     e.target.innerText='◇';
+    // }
+    delete_image(last_clicked[0],last_clicked[1]);
 
 });
 document.querySelector('.video-player').onended=function(){
