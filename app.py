@@ -60,7 +60,7 @@ class my_database:
                     image_id integer,
                     filename varchar NOT NULL default '',
                     source varchar default '',
-                    PRIMARY KEY (image_id)
+                    PRIMARY KEY (image_id),
                 ); """
 
         tag_table = """ CREATE TABLE TAGS (
@@ -137,6 +137,16 @@ class my_database:
     def clear_null_images(self):
         self.c.execute("DELETE FROM IMAGES WHERE filename='none'")
         self.conn.commit()
+    
+    def clear_null_tags(self):
+        self.c.execute("SELECT description FROM TAGS")
+        tag_list = [x[0] for x in self.c.fetchall()]
+        for tag in tag_list:
+            self.c.execute('SELECT * FROM IMAGE_TAG JOIN TAGS ON IMAGE_TAG.tag_id = TAGS.tag_id WHERE TAGS.description="{}"'.format(tag))
+            if self.c.fetchone() is None:
+                print("No images with tag: ",tag, " remain")
+                self.delete_tag(tag)
+
 
     def the_transfer(self):
         #Pull old taglist--> tag=(tag_id,description)
@@ -190,9 +200,18 @@ class my_database:
         self.add_source(filename,source)
 
     def delete_image_from_db(self,filename):
+        tags = self.check_tags(filename)
         print("Removing file from database: ",filename)
         self.c.execute("DELETE FROM IMAGES WHERE filename='{}'".format(filename))
         self.conn.commit()
+
+        for tag in tags:
+            self.c.execute('SELECT * FROM IMAGE_TAG JOIN TAGS ON IMAGE_TAG.tag_id = TAGS.tag_id WHERE TAGS.description="{}"'.format(tag[0]))
+            if self.c.fetchone() is None:
+                print("NOPE")
+                self.delete_tag(tag[0])
+        
+        
 
     
     def write_metadata_to_db(self,folder):
@@ -269,6 +288,8 @@ class my_database:
         if self.c.fetchone() == None:
             self.c.execute('DELETE FROM TAGS WHERE tag_id={}'.format(tag_id))
             self.conn.commit()
+        else:
+            print(self.c.fetchone())
         eel.js_clear_taglist()
         py_populate_tags()
     
@@ -684,7 +705,7 @@ def py_hide_image(filepath):
 def py_delete_image(input_filepath,delete_locally):
     global current_index
     global folder_size
-    # current_folder[current_folder.index(input_filepath)]='none'
+
     current_folder.pop(current_folder.index(input_filepath))
     folder_size-=1
     the_db.delete_image_from_db(input_filepath)
@@ -693,14 +714,11 @@ def py_delete_image(input_filepath,delete_locally):
 
     dirname = os.path.dirname(__file__)
 
-    # filepath = os.path.join(dirname, 'web/'+filepath)
     thumbnail = os.path.join(dirname, 'web/'+thumbnail)
     if delete_locally:
         print("Deleting local files as well")
         os.remove(input_filepath)
         os.remove(thumbnail)
-    # os.startfile(filepath)
-    # os.startfile(thumbnail)
     if current_index-1 > -1:
         current_index-=1
     else:
@@ -836,6 +854,7 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
     # the_db.the_transfer()
     # the_db.adjust_old_filenames()
     # the_db.clear_null_images()
+    the_db.clear_null_tags()
     # get_metadata()
     # py_right_control()
 
