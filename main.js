@@ -19,11 +19,11 @@ app.on("ready", () => {
       width: 1050,
       height: 690,
       // minHeight: 690,
-      minWidth: 542,
+      // minWidth: 542,
       autoHideMenuBar:false,
       frame:true,
       transparent:false,
-      useContentSize:true,
+      useContentSize:false,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
