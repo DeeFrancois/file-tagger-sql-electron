@@ -853,7 +853,7 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
     py_populate_drawer()
     # the_db.the_transfer()
     # the_db.adjust_old_filenames()
-    # the_db.clear_null_images()
+    the_db.clear_null_images()
     the_db.clear_null_tags()
     # get_metadata()
     # py_right_control()
