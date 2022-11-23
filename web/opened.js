@@ -534,22 +534,26 @@ Array.from(the_list).forEach(function(e){
 
 $(document).ready(function(){
     document.addEventListener("wheel", (event) => {
-        if (event.target.className=='drawer-image' || event.target.className=='drawer-image-container'){
+        console.log(event.target.className);
+        console.log("Wheel event");
+        if (event.target.className=='drawer-image' || event.target.className=='img-overlay' || event.target.className=='drawer-image-container'){
             event.preventDefault();
             event.stopPropagation();
             var elem = document.querySelector('.drawer-image-container');
-            
+            var image_height = document.querySelector('.drawer-image').height;
+            console.log('Scroll Top: '+elem.scrollTop);
+            console.log('Scroll Height: '+elem.scrollHeight);
             if(event.deltaY>0){
                 scroll_index+=6;
                 elem.scrollTo({
                     left:0,
-                    top:elem.scrollTop+100 < elem.scrollHeight ? elem.scrollTop+100 : 0,
+                    top:elem.scrollTop+image_height < elem.scrollHeight ? elem.scrollTop+image_height : 0,
                     behavior:'instant'});
                 }
                 else{
                     elem.scrollTo({
                         left:0,
-                        top:elem.scrollTop-0 > 0 ? elem.scrollTop-100 : 0,
+                        top:elem.scrollTop-image_height > 0 ? elem.scrollTop-image_height : 0,
                         behavior:'instant'});
                 }
         }

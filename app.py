@@ -149,19 +149,7 @@ class my_database:
 
 
     def the_transfer(self):
-        #Pull old taglist--> tag=(tag_id,description)
-        #for (tag_id,description) in taglist
-        #INSERT INTO TAGS(tag_id,description) VALUES(?,?)
-        
-        #pull old IMAGES
-        #for (old_filename) in images
-        #SELECT image_id FROM IMAGES WHERE filename={new_filename}
-
-        #PULL IMAGES
-        #for filepath in IMAGES
-        # new_filename= filepath.split('\')[-1]
-        # print(new_filename) 
-        #UPDATE IMAGES SET filename="{}" WHERE filename="{}".format(filepath,new_filename)
+       
         print("STARTING TRANSFER")
         other_conn = sqlite3.connect('old_references.db')
         other_conn.execute('PRAGMA foreign_keys=ON')
@@ -218,8 +206,6 @@ class my_database:
         the_list=os.listdir(folder)
         the_list= [x for x in the_list if os.path.isfile(folder+'/'+x) ]
         for item in the_list:
-            # self.c.execute("INSERT INTO IMAGES(filename) VALUES (?)",(item,))
-            # self.conn.commit()
             source = self.get_metadata(item)
             print("Adding: ",item, "with Source: ",source," to database")
             self.add_source(item,source)
@@ -227,7 +213,6 @@ class my_database:
     def get_metadata(self,filename):
         curr = filename
         exts = filename.split('.')[-1]
-        # print(exts)
         output=''
         if (exts == 'jpg' or exts == 'png' or exts == 'jpeg' or exts =='jfif'): #Unfinished, dont have a way to efficiently read/edit title property
             return
@@ -834,9 +819,6 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
     lock =0
     last_tag_batch=''
 
-    # glob_pattern = os.path.join(test_folderpath, '*')
-    # current_folder = sorted(glob(glob_pattern), key=os.path.getctime)
-    # random.shuffle(current_folder)
     the_db = my_database(current_db)
     # current_folder=the_db.get_folder_from_db()
     current_folder=the_db.get_folder_from_folder()
@@ -856,7 +838,6 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
     the_db.clear_null_images()
     the_db.clear_null_tags()
     # get_metadata()
-    # py_right_control()
 
 # generate_thumbnail()
 # x = threading.Thread(target=generate_thumbnail)
