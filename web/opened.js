@@ -341,7 +341,6 @@ function adjust_thumb_widths(){
     let curr_width = (document.body.getBoundingClientRect().width/1050 * 100 - 100).toFixed(0);
     // console.log(curr_width+'%');
     let curr_height = (document.body.getBoundingClientRect().height)
-    console.log(curr_width % 20);
     if ( curr_width%20 >=17 || curr_width%20 <=3){
         // console.log("RESIZE");
         document.querySelectorAll('.img-container').forEach(e=>e.style.width=100/(5+Math.floor(curr_width/20))+'%');
@@ -370,6 +369,10 @@ $(window).resize(function(e){
         if(sidebar_flag==0){
         toggle_sidebar();
         }
+    }
+    if(document.querySelector('.control-box').getBoundingClientRect().height<170){
+        if(drawer_flag==0)
+        toggle_drawer();
     }
     // clearTimeout(doit); delay resize
     // doit=setTimeout(resizedw,100);

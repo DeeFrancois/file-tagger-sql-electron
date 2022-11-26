@@ -16,9 +16,9 @@ let mainWindow
 
 app.on("ready", () => {
     const mainWindow = new BrowserWindow({
-      width: 1050,
-      height: 690,
-      // minHeight: 690,
+      width: 1200,
+      height: 750,
+      // minHeight: 750,
       // minWidth: 542,
       autoHideMenuBar:false,
       frame:true,

@@ -736,20 +736,23 @@ def generate_thumbnail():
     count = 0
     file_count = len(current_folder)
 
+    try:
+        os.mkdir('web/files/thumbs/'+current_db)
+    except:
+        pass
     for filepath in current_folder:
         count+=1
-        print(count/file_count*100,'%')
         filename=filepath.split('\\')[-1]
         # print(filename)
         curr = filepath
         # print(curr)
 
         output='web/files/thumbs/'+current_db+'/'+filename.replace('.webm','.jpg').replace('.mp4','.jpg')
+        if os.path.exists(output):
+            continue
+        print(count/file_count*100,'%')
+        
         # ffmpeg.input(curr).output(output).run()
-        try:
-            os.mkdir('web/files/thumbs/'+current_db)
-        except:
-            pass
         # print('Input: ',curr, " OUTPUT: ",output)
         exts = filename.split('.')[-1]
         # print(exts)
