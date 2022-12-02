@@ -115,6 +115,7 @@ class my_database:
         file_list=self.c.fetchall()
         file_list=[x[0] for x in file_list]
         # self.get_root_folder_from_db()
+        print(file_list)
         return file_list
 
     def get_folder_from_folder(self):
@@ -124,6 +125,9 @@ class my_database:
         glob_pattern = os.path.join(folder, '*.*')
         file_list = sorted(glob(glob_pattern), key=os.path.getctime)
         file_list = [x for x in file_list]
+        if (len(file_list)>0):
+            print("EMPTY")
+
         # file_list = [x for x in file_list if x.split('.')[-1] in ['webm','png','mp4','jpg'] ]
         return file_list
     
@@ -167,15 +171,19 @@ class my_database:
 
     def adjust_old_filenames(self):
         print("Starting adjustment")
-        other_conn = sqlite3.connect('old_references.db')
+        other_conn = sqlite3.connect('old_crashlogs.db')
         other_conn.execute('PRAGMA foreign_keys=ON')
         other_c = other_conn.cursor()
         other_c.execute("SELECT filename FROM IMAGES")
-        curr_filenames = [x[0] for x in other_c.fetchall()]
+        curr_filepaths = [x[0] for x in other_c.fetchall()]
+        new_path=input("Enter new path (example: D:/db_folder\\)")
 
-        for old_filepath in curr_filenames:
+        for old_filepath in curr_filepaths:
             print("OLD FILEPATH: ",old_filepath)
-            new_filepath = old_filepath.replace('C:/Users/damet/Desktop/New folder/Programming/Github_Projects/Personal_WIP_Directory/_pythonsql-ELECTRON/web/files/references\\','D:/PaintingReferences\\')
+            curr_filename = old_filepath.split('\\')[-1]
+            new_filepath= new_path + curr_filename
+            print("New: ",new_filepath)
+            # new_filepath = old_filepath.replace('D:/test_crashlogs\\','D:/PaintingReferences/test_crashlogs\\')
             other_c.execute('UPDATE IMAGES SET filename="{}" WHERE filename="{}"'.format(new_filepath,old_filepath))
         other_conn.commit()
     
@@ -393,26 +401,6 @@ class my_database:
 
 
 print("Here")
-
-# Using webview
-# def start_app():
-#     eel_thread = threading.Thread(target=eel_start) # Eel app start.
-#     eel_thread.setDaemon(True)
-#     eel_thread.start() # Run eel in a seperate thread.
-
-#     webview_start() # Start pywebview web browser.
-
-# def eel_start():
-#     # EEL app start.
-#     eel.init('web')
-#     eel.start("main.html", port=8000, mode=None, shutdown_delay=0.0)
-
-# def webview_start():
-#     # pywebview start.
-#     webview.create_window("App Name", "http://localhost:8000/main.html", frameless=True)
-#     webview.start()
-# #
-# start_app()
 
 #Using Electron
 
@@ -824,8 +812,14 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
 
     the_db = my_database(current_db)
     # current_folder=the_db.get_folder_from_db()
+    # print(the_db.get_folder_from_db())
+    # the_db.adjust_old_filenames()
     current_folder=the_db.get_folder_from_folder()
     base_list=current_folder
+    # if len(base_list) == 0:
+    #     print("EMPTY")
+    #     the_db.adjust_old_filenames()
+    #     return
     the_db.get_tag_list()
     folder_size = len(current_folder)
     print(folder_size, " images in folder")
@@ -838,6 +832,8 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
     py_populate_drawer()
     # the_db.the_transfer()
     # the_db.adjust_old_filenames()
+    # print(the_db.get_root_folder_from_db())
+    # the_db.get_root_folder_from_db()
     the_db.clear_null_images()
     the_db.clear_null_tags()
     # get_metadata()
