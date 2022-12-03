@@ -26,6 +26,10 @@ from PIL.ExifTags import TAGS
 #http://howto.philippkeller.com/2005/04/24/Tags-Database-schemas/ Toxi solution
 #https://stackoverflow.com/questions/20856/recommended-sql-database-design-for-tags-or-tagging
 
+#TODO: Finish folder change feature, figure out how to deal with folder modification
+    # maybe compare db filenames to folder filenames on each run and then prompt user to update (delete/add) database on each change (or "Apply to All" ofc)
+#  feature to pin window on top? will have to figure out electron specific stuff (main.js), specifically how to change window property from (opened.js to main.js communication)
+
 class my_database:
     def __init__(self,current_db) -> None:
         self.tag_list = []
@@ -171,7 +175,7 @@ class my_database:
 
     def adjust_old_filenames(self):
         print("Starting adjustment")
-        other_conn = sqlite3.connect('old_crashlogs.db')
+        other_conn = sqlite3.connect('temp_db.db')
         other_conn.execute('PRAGMA foreign_keys=ON')
         other_c = other_conn.cursor()
         other_c.execute("SELECT filename FROM IMAGES")
@@ -183,7 +187,6 @@ class my_database:
             curr_filename = old_filepath.split('\\')[-1]
             new_filepath= new_path + curr_filename
             print("New: ",new_filepath)
-            # new_filepath = old_filepath.replace('D:/test_crashlogs\\','D:/PaintingReferences/test_crashlogs\\')
             other_c.execute('UPDATE IMAGES SET filename="{}" WHERE filename="{}"'.format(new_filepath,old_filepath))
         other_conn.commit()
     
@@ -654,7 +657,7 @@ def py_retrieve_batch_with_tag(tag):
         
         folder_size = len(current_folder)
 
-        for item in current_folder[current_drawer_index:150]:
+        for item in current_folder:
             # print(item)
             filename=item.split('\\')[-1]
             thumb_path='files/thumbs/'+current_db+'/'+filename.replace('.webm','.jpg').replace('.mp4','.jpg')
