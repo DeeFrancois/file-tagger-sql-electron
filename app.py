@@ -831,7 +831,7 @@ def py_open_new_db(new_folder,gen_thumbs,shuffle):
         generate_thumbnail()
     if shuffle:
         random.shuffle(current_folder)
-    # hide_based_on_tags()
+    hide_based_on_tags()
     py_populate_drawer()
     # the_db.the_transfer()
     # the_db.adjust_old_filenames()
